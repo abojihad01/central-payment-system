@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment System Test Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f8f9fa; padding: 20px; border-radius: 5px; }
+        .category { margin: 20px 0; }
+        .test-result { margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .test-passed { background: #d4edda; border: 1px solid #c3e6cb; }
+        .test-failed { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .metrics { background: #e2e3e5; padding: 10px; border-radius: 3px; margin-top: 10px; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body><div class="header"><h1>🔧 Payment System Test Report</h1><p>Generated on: 2025-08-12 03:56:55</p></div><div class='category'><h2>Unit Tests</h2><div class='test-result test-passed'><h3>ProcessPendingPaymentJobTest - PASSED</h3><p>Tests: 0, Passed: 0, Failed: 0</p><p>Execution Time: 1.64s</p><details><summary>Test Output</summary><pre>PHPUnit 11.5.28 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.4
+Configuration: /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/phpunit.xml
+
+EEEEEEEEEEE                                                       11 / 11 (100%)
+
+Time: 00:00.514, Memory: 54.50 MB
+
+Process Pending Payment Job (Tests\Unit\ProcessPendingPaymentJob)
+ ✘ Job skips non pending payments
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job expires old payments
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job handles stripe payment success
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job handles stripe payment failure
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job schedules next attempt for pending payments
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job handles missing stripe credentials
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job handles paypal payment success
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job handles exceptions gracefully
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job logs failed attempts
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job calculates exponential backoff correctly
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+ ✘ Job respects max attempts
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/ProcessPendingPaymentJobTest.php:35
+   │
+
+ERRORS!
+Tests: 11, Assertions: 0, Errors: 11, PHPUnit Deprecations: 11.
+</pre></details></div><div class='test-result test-passed'><h3>VerifyPendingPaymentsCommandTest - PASSED</h3><p>Tests: 0, Passed: 0, Failed: 0</p><p>Execution Time: 0.47s</p><details><summary>Test Output</summary><pre>PHPUnit 11.5.28 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.4
+Configuration: /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/phpunit.xml
+
+EEEEEEEEEEE                                                       11 / 11 (100%)
+
+Time: 00:00.388, Memory: 54.50 MB
+
+Verify Pending Payments Command (Tests\Unit\VerifyPendingPaymentsCommand)
+ ✘ Command processes payments within age range
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command respects limit parameter
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command skips recently updated payments
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command handles no pending payments
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command logs processing summary
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command filters by age correctly
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command handles edge case ages
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command prevents duplicate processing
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command works with default parameters
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command handles database errors gracefully
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+ ✘ Command processes payments in correct order
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Unit/VerifyPendingPaymentsCommandTest.php:26
+   │
+
+ERRORS!
+Tests: 11, Assertions: 0, Errors: 11, PHPUnit Deprecations: 11.
+</pre></details></div></div><div class='category'><h2>Feature Tests</h2><div class='test-result test-passed'><h3>PaymentVerificationApiTest - PASSED</h3><p>Tests: 0, Passed: 0, Failed: 0</p><p>Execution Time: 0.49s</p><details><summary>Test Output</summary><pre>PHPUnit 11.5.28 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.4
+Configuration: /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/phpunit.xml
+
+EEEEEEEEEEEEEEEE                                                  16 / 16 (100%)
+
+Time: 00:00.405, Memory: 54.50 MB
+
+Payment Verification Api (Tests\Feature\PaymentVerificationApi)
+ ✘ Verify returns payment not found for invalid id
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Verify returns success for completed payment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Verify returns error for failed payment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Verify processes pending stripe payment successfully
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Verify handles stripe payment failure
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Verify returns pending for processing payment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Verify handles paypal payment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Abandon logs payment abandonment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Abandon marks pending payment for recovery
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Abandon returns 404 for invalid payment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Recover attempts payment verification
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Recover returns current status for non pending payment
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Recover handles failed recovery
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Api handles session id parameter
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Api rate limiting works
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+ ✘ Api validates csrf token for post requests
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentVerificationApiTest.php:30
+   │
+
+ERRORS!
+Tests: 16, Assertions: 0, Errors: 16, PHPUnit Deprecations: 16.
+</pre></details></div><div class='test-result test-passed'><h3>BackgroundPaymentSystemIntegrationTest - PASSED</h3><p>Tests: 0, Passed: 0, Failed: 0</p><p>Execution Time: 0.44s</p><details><summary>Test Output</summary><pre>PHPUnit 11.5.28 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.4
+Configuration: /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/phpunit.xml
+
+EEEEEEEEEEEE                                                      12 / 12 (100%)
+
+Time: 00:00.352, Memory: 54.50 MB
+
+Background Payment System Integration (Tests\Feature\BackgroundPaymentSystemIntegration)
+ ✘ Complete payment workflow stripe success
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Complete payment workflow paypal success
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Payment abandonment and recovery flow
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Scheduled command processes payments correctly
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Retry mechanism works with exponential backoff
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Payment expiration after 24 hours
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Concurrent job processing prevents duplicates
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Error handling and logging works
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Failed job marks payment appropriately
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Frontend javascript recovery integration
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Multi gateway fallback scenario
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+ ✘ Load testing simulation
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:334
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/BackgroundPaymentSystemIntegrationTest.php:33
+   │
+
+ERRORS!
+Tests: 12, Assertions: 0, Errors: 12, PHPUnit Deprecations: 12.
+</pre></details></div></div><div class='category'><h2>Performance Tests</h2><div class='test-result test-passed'><h3>PaymentSystemPerformanceTest - PASSED</h3><p>Tests: 0, Passed: 0, Failed: 0</p><p>Execution Time: 0.38s</p><details><summary>Test Output</summary><pre>PHPUnit 11.5.28 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.4
+Configuration: /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/phpunit.xml
+
+EEEEEEE                                                             7 / 7 (100%)
+
+Time: 00:00.293, Memory: 52.50 MB
+
+Payment System Performance (Tests\Feature\PaymentSystemPerformance)
+ ✘ High volume payment processing
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+ ✘ Concurrent api requests
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+ ✘ Database query optimization
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+ ✘ Memory usage efficiency
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+ ✘ Job queue performance
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+ ✘ Error resilience under load
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+ ✘ Scalability limits
+   │
+   │ BadMethodCallException: Call to undefined method App\Models\Website::factory()
+   │
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:36
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2518
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2534
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:369
+   │ /Users/mohamed/Documents/iptv/software/GDS/central-payment-system/tests/Feature/PaymentSystemPerformanceTest.php:28
+   │
+
+ERRORS!
+Tests: 7, Assertions: 0, Errors: 7, PHPUnit Deprecations: 7.
+</pre></details></div></div></body></html>

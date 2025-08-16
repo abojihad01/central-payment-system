@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'عملية دفع آمنة',
+    'subtitle' => 'أكمل اشتراكك في :website',
+    'amount' => 'المبلغ',
+    'total_amount' => 'المبلغ الإجمالي:',
+    'features_title' => 'ما ستحصل عليه:',
+    'customer_info_title' => 'معلومات العميل',
+    'email' => 'عنوان البريد الإلكتروني',
+    'email_required' => 'عنوان البريد الإلكتروني *',
+    'phone' => 'رقم الهاتف',
+    'phone_optional' => 'رقم الهاتف (اختياري)',
+    'payment_method' => 'طريقة الدفع',
+    'credit_card' => 'بطاقة ائتمان/خصم',
+    'paypal' => 'PayPal',
+    'secure_payment' => 'دفع آمن',
+    'redirect_notice' => 'سيتم تحويلك إلى صفحة الدفع الآمنة لـ Stripe',
+    'pay_button' => 'ادفع :amount :currency',
+    'processing' => 'جاري المعالجة...',
+    'security_notice' => 'معلومات الدفع الخاصة بك آمنة ومشفرة',
+    'review' => 'مراجعة',
+    'payment' => 'الدفع',
+    'complete' => 'إكمال',
+    'secure_checkout' => 'عملية دفع آمنة',
+    'quick_checkout' => 'سريع وسهل',
+    'instant_access' => 'وصول فوري',
+];

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Sichere Kasse',
+    'subtitle' => 'Vervollständigen Sie Ihr Abonnement für :website',
+    'total_amount' => 'Gesamtbetrag:',
+    'features_title' => 'Was Sie erhalten:',
+    'customer_info_title' => 'Kundeninformationen',
+    'email' => 'E-Mail-Adresse',
+    'email_required' => 'E-Mail-Adresse *',
+    'phone' => 'Telefonnummer',
+    'phone_optional' => 'Telefonnummer (Optional)',
+    'payment_method' => 'Zahlungsmethode',
+    'credit_card' => 'Kredit-/Debitkarte',
+    'paypal' => 'PayPal',
+    'secure_payment' => 'Sichere Zahlung',
+    'redirect_notice' => 'Sie werden zur sicheren Kasse von Stripe weitergeleitet',
+    'pay_button' => ':amount :currency bezahlen',
+    'processing' => 'Verarbeitung...',
+    'security_notice' => 'Ihre Zahlungsinformationen sind sicher und verschlüsselt',
+    'review' => 'Überprüfung',
+    'payment' => 'Zahlung',
+    'complete' => 'Vollständig',
+    'secure_checkout' => 'Sichere Kasse',
+    'quick_checkout' => 'Schnell und einfach',
+    'instant_access' => 'Sofortiger Zugang',
+];

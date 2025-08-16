@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Säker Betalning',
+    'subtitle' => 'Slutför din prenumeration på :website',
+    'total_amount' => 'Totalt Belopp:',
+    'features_title' => 'Vad du får:',
+    'customer_info_title' => 'Kundinformation',
+    'email' => 'E-postadress',
+    'email_required' => 'E-postadress *',
+    'phone' => 'Telefonnummer',
+    'phone_optional' => 'Telefonnummer (Valfritt)',
+    'payment_method' => 'Betalningsmetod',
+    'credit_card' => 'Kredit-/Betalkort',
+    'paypal' => 'PayPal',
+    'secure_payment' => 'Säker Betalning',
+    'redirect_notice' => 'Du kommer att omdirigeras till Stripes säkra betalningssida',
+    'pay_button' => 'Betala :amount :currency',
+    'processing' => 'Bearbetar...',
+    'security_notice' => 'Din betalningsinformation är säker och krypterad',
+    'review' => 'Granska',
+    'payment' => 'Betalning',
+    'complete' => 'Klar',
+    'secure_checkout' => 'Säker Betalning',
+    'quick_checkout' => 'Snabbt & Enkelt',
+    'instant_access' => 'Omedelbar Åtkomst',
+];

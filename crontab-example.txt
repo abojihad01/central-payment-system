@@ -1,0 +1,19 @@
+# Central Payment System - Cron Jobs
+# Add these lines to your server's crontab (crontab -e)
+
+# Run Laravel scheduler every minute (this handles all scheduled tasks)
+* * * * * cd /path/to/your/central-payment-system && php artisan schedule:run >> /dev/null 2>&1
+
+# Alternative: Run pending payments check manually every 15 minutes
+# */15 * * * * cd /path/to/your/central-payment-system && php artisan payments:check-pending --quiet >> /var/log/pending-payments.log 2>&1
+
+# Daily cleanup of very old pending payments (7+ days old) at 2 AM
+# 0 2 * * * cd /path/to/your/central-payment-system && php artisan payments:check-pending --max-age=168 --limit=100 --quiet >> /var/log/pending-payments-cleanup.log 2>&1
+
+# Weekly report on Sunday at 8 AM
+# 0 8 * * 0 cd /path/to/your/central-payment-system && php artisan payments:check-pending --max-age=24 --dry-run >> /var/log/pending-payments-report.log 2>&1
+
+# Instructions:
+# 1. Replace "/path/to/your/central-payment-system" with your actual project path
+# 2. Make sure the web server user has permissions to write to log files
+# 3. Recommended: Use Laravel's built-in scheduler (first line) which handles all tasks automatically

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Pago Seguro',
+    'subtitle' => 'Complete su suscripción a :website',
+    'total_amount' => 'Monto Total:',
+    'features_title' => 'Lo que obtendrá:',
+    'customer_info_title' => 'Información del Cliente',
+    'email' => 'Dirección de Correo Electrónico',
+    'email_required' => 'Dirección de Correo Electrónico *',
+    'phone' => 'Número de Teléfono',
+    'phone_optional' => 'Número de Teléfono (Opcional)',
+    'payment_method' => 'Método de Pago',
+    'credit_card' => 'Tarjeta de Crédito/Débito',
+    'paypal' => 'PayPal',
+    'secure_payment' => 'Pago Seguro',
+    'redirect_notice' => 'Será redirigido a la página de pago seguro de Stripe',
+    'pay_button' => 'Pagar :amount :currency',
+    'processing' => 'Procesando...',
+    'security_notice' => 'Su información de pago es segura y está encriptada',
+    'review' => 'Revisar',
+    'payment' => 'Pago',
+    'complete' => 'Completar',
+    'secure_checkout' => 'Pago Seguro',
+    'quick_checkout' => 'Rápido y Fácil',
+    'instant_access' => 'Acceso Instantáneo',
+];

@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title' => 'Secure Checkout',
+    'subtitle' => 'Complete your subscription to :website',
+    'amount' => 'Amount',
+    'total_amount' => 'Total Amount:',
+    'features_title' => 'What you\'ll get:',
+    'customer_info_title' => 'Customer Information',
+    'email' => 'Email Address',
+    'email_required' => 'Email Address *',
+    'phone' => 'Phone Number',
+    'phone_optional' => 'Phone Number (Optional)',
+    'payment_method' => 'Payment Method',
+    'credit_card' => 'Credit/Debit Card',
+    'paypal' => 'PayPal',
+    'secure_payment' => 'Secure Payment',
+    'redirect_notice' => 'You\'ll be redirected to Stripe\'s secure checkout page',
+    'pay_button' => 'Pay :amount :currency',
+    'processing' => 'Processing...',
+    'security_notice' => 'Your payment information is secure and encrypted',
+    'review' => 'Review',
+    'payment' => 'Payment',
+    'complete' => 'Complete',
+    'secure_checkout' => 'Secure Checkout',
+    'quick_checkout' => 'Quick & Easy',
+    'instant_access' => 'Instant Access',
+];

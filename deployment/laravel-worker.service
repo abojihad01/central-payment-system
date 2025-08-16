@@ -1,0 +1,29 @@
+[Unit]
+Description=Laravel Queue Worker - Central Payment System
+After=network.target
+Requires=mysql.service redis.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=5s
+ExecStart=/usr/bin/php /var/www/central-payment-system/artisan queue:work --sleep=3 --tries=3 --max-time=3600 --memory=512
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/central-payment-system/storage
+
+# Environment
+Environment=HOME=/var/www/central-payment-system
+Environment=USER=www-data
+WorkingDirectory=/var/www/central-payment-system
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Paiement Sécurisé',
+    'subtitle' => 'Finalisez votre abonnement à :website',
+    'total_amount' => 'Montant Total:',
+    'features_title' => 'Ce que vous obtiendrez:',
+    'customer_info_title' => 'Informations Client',
+    'email' => 'Adresse E-mail',
+    'email_required' => 'Adresse E-mail *',
+    'phone' => 'Numéro de Téléphone',
+    'phone_optional' => 'Numéro de Téléphone (Optionnel)',
+    'payment_method' => 'Méthode de Paiement',
+    'credit_card' => 'Carte de Crédit/Débit',
+    'paypal' => 'PayPal',
+    'secure_payment' => 'Paiement Sécurisé',
+    'redirect_notice' => 'Vous serez redirigé vers la page de paiement sécurisée de Stripe',
+    'pay_button' => 'Payer :amount :currency',
+    'processing' => 'En cours...',
+    'security_notice' => 'Vos informations de paiement sont sécurisées et chiffrées',
+    'review' => 'Révision',
+    'payment' => 'Paiement',
+    'complete' => 'Terminé',
+    'secure_checkout' => 'Paiement Sécurisé',
+    'quick_checkout' => 'Rapide & Facile',
+    'instant_access' => 'Accès Instantané',
+];
