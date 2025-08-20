@@ -137,7 +137,98 @@ class PaymentGatewayService
         });
     }
 
-    public function selectBestAccount(PaymentGateway $gateway, bool $productionOnly = false, ?int $paymentId = null): ?PaymentAccount
+    /**
+     * Select the truly least used account across ALL gateways
+     */
+    public function selectGlobalLeastUsedAccount(bool $productionOnly = false, ?int $planId = null): ?array
+    {
+        $startTime = microtime(true);
+        
+        // Get all active gateways with their accounts
+        $allAccounts = collect();
+        $gateways = $this->getAvailableGateways($productionOnly);
+        
+        foreach ($gateways as $gateway) {
+            $query = $gateway->activeAccounts();
+            
+            if ($productionOnly) {
+                $query->production();
+            }
+            
+            $gatewayAccounts = $query->get();
+            
+            // Filter by plan availability for Stripe
+            if ($planId && $gateway->name === 'stripe') {
+                $gatewayAccounts = $this->filterAccountsByPlanAvailability($gatewayAccounts, $planId);
+            }
+            
+            // Add gateway info to each account
+            foreach ($gatewayAccounts as $account) {
+                $account->gateway = $gateway;
+            }
+            
+            $allAccounts = $allAccounts->merge($gatewayAccounts);
+        }
+        
+        if ($allAccounts->isEmpty()) {
+            return null;
+        }
+        
+        // Find truly unused account first (across all gateways)
+        $unusedAccount = $allAccounts->where('successful_transactions', 0)
+                                   ->where('failed_transactions', 0)
+                                   ->sortBy('created_at') // Oldest unused first
+                                   ->first();
+        
+        if ($unusedAccount) {
+            $selectionTime = (microtime(true) - $startTime) * 1000;
+            
+            Log::info('Selected globally unused payment account', [
+                'gateway' => $unusedAccount->gateway->name,
+                'account_id' => $unusedAccount->account_id,
+                'account_name' => $unusedAccount->name,
+                'strategy' => 'global_unused_account',
+                'selection_time_ms' => $selectionTime
+            ]);
+            
+            return [
+                'account' => $unusedAccount,
+                'gateway' => $unusedAccount->gateway,
+                'selection_time_ms' => $selectionTime,
+                'selection_method' => 'unused',
+                'selection_reason' => 'Unused account - never processed transactions (global selection)'
+            ];
+        }
+        
+        // Find least used account across all gateways
+        $leastUsedAccount = $allAccounts->sortBy([
+            ['successful_transactions', 'asc'],
+            ['failed_transactions', 'asc'],
+            ['created_at', 'asc'] // Older accounts first as tiebreaker
+        ])->first();
+        
+        $selectionTime = (microtime(true) - $startTime) * 1000;
+        
+        Log::info('Selected globally least used payment account', [
+            'gateway' => $leastUsedAccount->gateway->name,
+            'account_id' => $leastUsedAccount->account_id,
+            'account_name' => $leastUsedAccount->name,
+            'successful_transactions' => $leastUsedAccount->successful_transactions,
+            'failed_transactions' => $leastUsedAccount->failed_transactions,
+            'strategy' => 'global_least_used',
+            'selection_time_ms' => $selectionTime
+        ]);
+        
+        return [
+            'account' => $leastUsedAccount,
+            'gateway' => $leastUsedAccount->gateway,
+            'selection_time_ms' => $selectionTime,
+            'selection_method' => 'least_used',
+            'selection_reason' => "Globally least used account - {$leastUsedAccount->successful_transactions} successful transactions"
+        ];
+    }
+
+    public function selectBestAccount(PaymentGateway $gateway, bool $productionOnly = false, ?int $paymentId = null, ?int $planId = null): ?PaymentAccount
     {
         $startTime = microtime(true);
         
@@ -151,6 +242,19 @@ class PaymentGatewayService
 
         if ($accounts->isEmpty()) {
             return null;
+        }
+
+        // Filter accounts by plan availability for Stripe
+        if ($planId && $gateway->name === 'stripe') {
+            $accounts = $this->filterAccountsByPlanAvailability($accounts, $planId);
+            
+            if ($accounts->isEmpty()) {
+                Log::warning('No Stripe accounts have the required plan', [
+                    'plan_id' => $planId,
+                    'gateway' => $gateway->name
+                ]);
+                return null;
+            }
         }
 
         // Get configuration for this gateway
@@ -406,6 +510,67 @@ class PaymentGatewayService
         }) + 1;
     }
 
+    /**
+     * Filter accounts to only those that have the specified plan available
+     */
+    private function filterAccountsByPlanAvailability(Collection $accounts, int $planId): Collection
+    {
+        $plan = \App\Models\Plan::find($planId);
+        
+        if (!$plan) {
+            Log::warning('Plan not found when filtering accounts', ['plan_id' => $planId]);
+            return $accounts;
+        }
+
+        $metadata = $plan->metadata ?? [];
+        $stripeProducts = $metadata['stripe_products'] ?? [];
+
+        // If no stripe_products in metadata, fall back to old method
+        if (empty($stripeProducts)) {
+            $primaryAccountId = $metadata['stripe_account_id'] ?? null;
+            if ($primaryAccountId) {
+                return $accounts->filter(function ($account) use ($primaryAccountId) {
+                    return $account->id == $primaryAccountId;
+                });
+            }
+            // If no account specified, allow all accounts (will likely fail but let Stripe handle it)
+            return $accounts;
+        }
+
+        // Filter accounts that have this plan configured
+        return $accounts->filter(function ($account) use ($stripeProducts) {
+            return isset($stripeProducts[$account->id]);
+        });
+    }
+
+    /**
+     * Get the Stripe price ID for a plan in a specific account
+     */
+    public function getStripePriceId(int $planId, int $accountId): ?string
+    {
+        $plan = \App\Models\Plan::find($planId);
+        
+        if (!$plan) {
+            return null;
+        }
+
+        $metadata = $plan->metadata ?? [];
+        
+        // Check new format first (stripe_products array)
+        $stripeProducts = $metadata['stripe_products'] ?? [];
+        if (isset($stripeProducts[$accountId]['price_id'])) {
+            return $stripeProducts[$accountId]['price_id'];
+        }
+
+        // Fallback to old format if this is the primary account
+        $primaryAccountId = $metadata['stripe_account_id'] ?? null;
+        if ($primaryAccountId == $accountId && isset($metadata['stripe_price_id'])) {
+            return $metadata['stripe_price_id'];
+        }
+
+        return null;
+    }
+
     public function selectPaymentMethod(
         string $currency = 'USD',
         ?string $country = null,
@@ -570,5 +735,137 @@ class PaymentGatewayService
                 'message' => 'PayPal connection test failed: ' . $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * Get total transaction count for each payment gateway
+     */
+    public function getGatewayUsageStats(): array
+    {
+        $gateways = PaymentGateway::with(['accounts'])->active()->get();
+        
+        $stats = [];
+        
+        foreach ($gateways as $gateway) {
+            $totalTransactions = 0;
+            $successfulTransactions = 0;
+            $failedTransactions = 0;
+            $totalAmount = 0;
+            
+            // حساب إجمالي العمليات من جميع الحسابات في البوابة
+            foreach ($gateway->accounts as $account) {
+                $totalTransactions += $account->successful_transactions + $account->failed_transactions;
+                $successfulTransactions += $account->successful_transactions;
+                $failedTransactions += $account->failed_transactions;
+                $totalAmount += $account->total_amount;
+            }
+            
+            $stats[] = [
+                'gateway_name' => $gateway->name,
+                'display_name' => $gateway->display_name,
+                'total_transactions' => $totalTransactions,
+                'successful_transactions' => $successfulTransactions,
+                'failed_transactions' => $failedTransactions,
+                'total_amount' => $totalAmount,
+                'success_rate' => $totalTransactions > 0 ? ($successfulTransactions / $totalTransactions) * 100 : 0,
+                'accounts_count' => $gateway->accounts->count(),
+                'is_active' => $gateway->is_active
+            ];
+        }
+        
+        return $stats;
+    }
+
+    /**
+     * Determine which payment gateway has the least usage (fewest transactions)
+     */
+    public function getLeastUsedGateway(): ?array
+    {
+        $stats = $this->getGatewayUsageStats();
+        
+        if (empty($stats)) {
+            return null;
+        }
+        
+        // فلترة البوابات النشطة فقط
+        $activeStats = array_filter($stats, function($stat) {
+            return $stat['is_active'] === true;
+        });
+        
+        if (empty($activeStats)) {
+            return null;
+        }
+        
+        // العثور على البوابة بأقل عدد عمليات
+        $leastUsed = array_reduce($activeStats, function($carry, $item) {
+            if ($carry === null || $item['total_transactions'] < $carry['total_transactions']) {
+                return $item;
+            }
+            return $carry;
+        });
+        
+        return $leastUsed;
+    }
+
+    /**
+     * Get comparison between PayPal and Stripe usage
+     */
+    public function getPaymentMethodComparison(): array
+    {
+        $stats = $this->getGatewayUsageStats();
+        
+        $paypalStats = null;
+        $stripeStats = null;
+        
+        foreach ($stats as $stat) {
+            if ($stat['gateway_name'] === 'paypal') {
+                $paypalStats = $stat;
+            } elseif ($stat['gateway_name'] === 'stripe') {
+                $stripeStats = $stat;
+            }
+        }
+        
+        return [
+            'paypal' => $paypalStats,
+            'stripe' => $stripeStats,
+            'least_used' => $this->getLeastUsedGateway(),
+        ];
+    }
+
+    /**
+     * Check if PayPal is less used than Stripe
+     */
+    public function isPayPalLessUsed(): bool
+    {
+        $comparison = $this->getPaymentMethodComparison();
+        
+        $paypalTransactions = $comparison['paypal']['total_transactions'] ?? 0;
+        $stripeTransactions = $comparison['stripe']['total_transactions'] ?? 0;
+        
+        return $paypalTransactions < $stripeTransactions;
+    }
+
+    /**
+     * Get the payment method that should be promoted (least used one)
+     */
+    public function getPromotedPaymentMethod(): ?string
+    {
+        $comparison = $this->getPaymentMethodComparison();
+        
+        if (!$comparison['paypal'] || !$comparison['stripe']) {
+            return null; // One of the gateways is missing
+        }
+        
+        $paypalTransactions = $comparison['paypal']['total_transactions'];
+        $stripeTransactions = $comparison['stripe']['total_transactions'];
+        
+        if ($paypalTransactions < $stripeTransactions) {
+            return 'paypal';
+        } elseif ($stripeTransactions < $paypalTransactions) {
+            return 'stripe';
+        }
+        
+        // Default to PayPal when usage is equal (to promote it over Stripe)
+        return 'paypal';
     }
 }

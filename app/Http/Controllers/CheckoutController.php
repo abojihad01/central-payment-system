@@ -38,13 +38,19 @@ class CheckoutController extends Controller
                     $stripePublishableKey = $account->credentials['publishable_key'];
                 }
             }
+
+            // تحديد البوابة المُفضلة (الأقل استخداماً) لعرض الشهر المجاني
+            $promotedPaymentMethod = $this->gatewayService->getPromotedPaymentMethod();
+            $paymentComparison = $this->gatewayService->getPaymentMethodComparison();
             
             return view('checkout', [
                 'paymentData' => $data,
                 'token' => $token,
                 'stripePublishableKey' => $stripePublishableKey,
                 'language' => $language,
-                'isRTL' => in_array($language, ['ar', 'he', 'fa', 'ur'])
+                'isRTL' => in_array($language, ['ar', 'he', 'fa', 'ur']),
+                'promotedPaymentMethod' => $promotedPaymentMethod,
+                'paymentComparison' => $paymentComparison
             ]);
         } catch (\Exception $e) {
             // محاولة استخراج اللغة من التوكن حتى لو كان خاطئاً

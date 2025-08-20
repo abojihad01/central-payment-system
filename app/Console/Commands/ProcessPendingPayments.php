@@ -88,6 +88,11 @@ class ProcessPendingPayments extends Command
             'email_verified' => false
         ]);
         
+        // Calculate dates based on billing interval
+        $startsAt = now();
+        $expiresAt = $payment->generatedLink->plan->calculateExpiryDate($startsAt);
+        $durationDays = $payment->generatedLink->plan->getSubscriptionDurationDays();
+        
         // Create subscription
         $subscription = Subscription::create([
             'subscription_id' => 'sub_' . Str::random(24),
@@ -97,14 +102,16 @@ class ProcessPendingPayments extends Command
             'customer_email' => $payment->customer_email,
             'customer_phone' => $payment->customer_phone,
             'status' => 'active',
-            'starts_at' => now(),
-            'expires_at' => $payment->generatedLink->plan->duration_days 
-                ? now()->addDays($payment->generatedLink->plan->duration_days) 
-                : null,
+            'starts_at' => $startsAt,
+            'expires_at' => $expiresAt,
+            'next_billing_date' => $expiresAt->copy(),
+            'billing_cycle_count' => 1,
+            'last_billing_date' => $startsAt,
             'plan_data' => [
                 'name' => $payment->generatedLink->plan->name,
                 'price' => $payment->amount,
                 'currency' => $payment->currency,
+                'duration_days' => $durationDays,
                 'features' => $payment->generatedLink->plan->features ?? []
             ]
         ]);

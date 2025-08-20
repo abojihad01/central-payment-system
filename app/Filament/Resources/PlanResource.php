@@ -126,28 +126,73 @@ class PlanResource extends Resource
                     ->visible(fn (Forms\Get $get): bool => $get('subscription_type') === 'recurring'),
 
                 Forms\Components\Section::make('Stripe Integration')
+                    ->description('Automatically create this plan in your Stripe accounts to ensure seamless payment processing')
                     ->schema([
                         Forms\Components\Toggle::make('create_stripe_product')
-                            ->label('Create Stripe Product')
-                            ->hint('Automatically create this plan as a Stripe product/price')
+                            ->label('✨ Automatically create this plan as a Stripe product/price')
+                            ->helperText('When enabled, this plan will be created as a product in all selected Stripe accounts automatically upon saving. This prevents payment errors and ensures smooth checkout experience.')
                             ->live()
-                            ->default(false),
+                            ->default(true)
+                            ->inline(false),
                         Forms\Components\Select::make('stripe_account_ids')
-                            ->label('Stripe Accounts')
+                            ->label('Select Stripe Accounts')
                             ->multiple()
                             ->options(function () {
                                 return PaymentAccount::whereHas('gateway', function($q) {
                                     $q->where('name', 'stripe');
                                 })->where('is_active', true)->pluck('name', 'id');
                             })
-                            ->placeholder('Select one or more Stripe accounts')
+                            ->placeholder('Choose one or more Stripe accounts')
                             ->visible(fn (Forms\Get $get): bool => $get('create_stripe_product'))
                             ->required(fn (Forms\Get $get): bool => $get('create_stripe_product'))
-                            ->hint('The plan will be created as a product in all selected Stripe accounts'),
-                        Forms\Components\Placeholder::make('stripe_info')
-                            ->label('Stripe Integration Info')
-                            ->content('This will create the product and price in Stripe when you save the plan.')
+                            ->helperText('The plan will be created as a product/price in all selected Stripe accounts. This ensures the plan is available for payments across all your Stripe configurations.')
+                            ->default(function () {
+                                // Default to all active Stripe accounts
+                                return PaymentAccount::whereHas('gateway', function($q) {
+                                    $q->where('name', 'stripe');
+                                })->where('is_active', true)->pluck('id')->toArray();
+                            })
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                $count = is_array($state) ? count($state) : 0;
+                                $set('selected_accounts_count', $count);
+                            }),
+                        Forms\Components\Placeholder::make('account_selection_info')
+                            ->label('')
+                            ->content(function (Forms\Get $get) {
+                                $selectedIds = $get('stripe_account_ids') ?? [];
+                                $count = count($selectedIds);
+                                $totalAccounts = PaymentAccount::whereHas('gateway', function($q) {
+                                    $q->where('name', 'stripe');
+                                })->where('is_active', true)->count();
+                                
+                                if ($count === 0) {
+                                    return new \Illuminate\Support\HtmlString('<div class="text-amber-600 font-medium">⚠️ No accounts selected - plan will not be created in Stripe</div>');
+                                } elseif ($count === $totalAccounts) {
+                                    return new \Illuminate\Support\HtmlString('<div class="text-green-600 font-medium">✅ Will be created in all ' . $count . ' Stripe accounts</div>');
+                                } else {
+                                    return new \Illuminate\Support\HtmlString('<div class="text-blue-600 font-medium">📊 Will be created in ' . $count . ' out of ' . $totalAccounts . ' Stripe accounts</div>');
+                                }
+                            })
                             ->visible(fn (Forms\Get $get): bool => $get('create_stripe_product')),
+                        Forms\Components\Placeholder::make('stripe_info')
+                            ->label('💡 What happens when you save?')
+                            ->content(new \Illuminate\Support\HtmlString('
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+                                    <div class="font-medium text-blue-900 mb-2">Automatic Stripe Integration Process:</div>
+                                    <ul class="text-blue-800 space-y-1 list-disc list-inside">
+                                        <li>Creates a Stripe Product with your plan name and description</li>
+                                        <li>Creates a Stripe Price with your specified amount and currency</li>
+                                        <li>Configures recurring billing if this is a subscription plan</li>
+                                        <li>Saves all Stripe IDs to the plan for future reference</li>
+                                        <li>Ensures the plan works seamlessly with payment processing</li>
+                                    </ul>
+                                    <div class="mt-2 text-blue-700 font-medium">✅ This prevents "price not found" errors during payments!</div>
+                                </div>
+                            '))
+                            ->visible(fn (Forms\Get $get): bool => $get('create_stripe_product')),
+                        Forms\Components\Hidden::make('selected_accounts_count')
+                            ->default(0),
                     ])->columns(1),
             ]);
     }

@@ -67,7 +67,10 @@ class PaymentAccountSelectionResource extends Resource
                     ->label('Account')
                     ->searchable()
                     ->sortable()
-                    ->limit(20),
+                    ->wrap()
+                    ->tooltip(function (PaymentAccountSelection $record): ?string {
+                        return $record->paymentAccount?->name;
+                    }),
 
                 Tables\Columns\TextColumn::make('selection_method')
                     ->label('Method')
@@ -85,7 +88,7 @@ class PaymentAccountSelectionResource extends Resource
 
                 Tables\Columns\TextColumn::make('selection_reason')
                     ->label('Reason')
-                    ->limit(30)
+                    ->wrap()
                     ->tooltip(function (PaymentAccountSelection $record): string {
                         return $record->selection_reason;
                     }),

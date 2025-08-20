@@ -309,9 +309,13 @@ class Subscription extends Model
      */
     public function processRenewal(Payment $renewalPayment)
     {
+        $currentExpiry = $this->expires_at;
+        $newExpiry = $currentExpiry->addDays($this->plan->duration_days);
+        $newNextBilling = $newExpiry->copy()->addDays($this->plan->duration_days);
+        
         $this->update([
-            'expires_at' => $this->expires_at->addDays($this->plan->duration_days),
-            'next_billing_date' => $this->expires_at->addDays($this->plan->duration_days),
+            'expires_at' => $newExpiry,
+            'next_billing_date' => $newNextBilling,
             'billing_cycle_count' => $this->billing_cycle_count + 1,
             'last_billing_date' => now()
         ]);

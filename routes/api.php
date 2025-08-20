@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\BusinessIntelligenceController;
 use App\Http\Controllers\Api\StripeProductController;
 use App\Http\Controllers\Api\PaymentVerificationController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -197,4 +198,10 @@ Route::prefix('reports')->group(function () {
 // Dashboard metrics endpoint
 Route::prefix('dashboard')->group(function () {
     Route::get('/metrics', [DashboardController::class, 'metrics']);
+});
+
+// Webhook endpoints (no authentication required)
+Route::prefix('webhooks')->group(function () {
+    Route::post('/stripe', [WebhookController::class, 'stripe'])->name('webhooks.stripe');
+    Route::post('/paypal', [WebhookController::class, 'paypal'])->name('webhooks.paypal');
 });

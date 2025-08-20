@@ -291,8 +291,74 @@ class ProcessPendingPayment implements ShouldQueue
             // Initialize Stripe client
             $stripe = new \Stripe\StripeClient($paymentAccount->credentials['secret_key']);
             
+            // Check if we have a Stripe Checkout Session ID
+            if ($this->payment->gateway_session_id && str_starts_with($this->payment->gateway_session_id, 'cs_')) {
+                $session = $stripe->checkout->sessions->retrieve($this->payment->gateway_session_id);
+                
+                Log::info('Stripe Checkout Session retrieved', [
+                    'payment_id' => $this->payment->id,
+                    'session_id' => $this->payment->gateway_session_id,
+                    'status' => $session->status,
+                    'payment_status' => $session->payment_status
+                ]);
+                
+                if ($session->status === 'complete' && $session->payment_status === 'paid') {
+                    $this->payment->update([
+                        'status' => 'completed',
+                        'confirmed_at' => now(),
+                        'paid_at' => now(),
+                        'gateway_response' => [
+                            'session_id' => $session->id,
+                            'status' => $session->status,
+                            'payment_status' => $session->payment_status,
+                            'amount_total' => $session->amount_total,
+                            'currency' => $session->currency,
+                            'customer_email' => $session->customer_details->email ?? null,
+                            'processed_at' => now()
+                        ]
+                    ]);
+                    
+                    Log::info('Stripe Checkout payment completed successfully', [
+                        'payment_id' => $this->payment->id,
+                        'session_id' => $session->id,
+                        'amount' => $session->amount_total / 100
+                    ]);
+                    
+                    // Handle subscription creation and customer events
+                    $this->handleSubscriptionCreation();
+                    
+                    // Dispatch events
+                    event(new \App\Events\PaymentCompleted($this->payment));
+                    
+                    // Send notification
+                    Notification::send($this->payment, new PaymentCompleted($this->payment));
+                    
+                    return;
+                } elseif ($session->status === 'open') {
+                    // Session is still open, payment not completed yet
+                    Log::info('Stripe Checkout session still open', [
+                        'payment_id' => $this->payment->id,
+                        'session_id' => $session->id,
+                        'status' => $session->status
+                    ]);
+                    return;
+                } elseif ($session->status === 'expired') {
+                    // Session expired, mark as failed
+                    $this->payment->update([
+                        'status' => 'failed',
+                        'gateway_response' => [
+                            'session_id' => $session->id,
+                            'status' => $session->status,
+                            'error' => 'Checkout session expired',
+                            'failed_at' => now()
+                        ]
+                    ]);
+                    return;
+                }
+            }
+            
             // If we have a gateway_payment_id, it's a PaymentIntent that needs confirmation/retrieval
-            if ($this->payment->gateway_payment_id) {
+            if ($this->payment->gateway_payment_id && str_starts_with($this->payment->gateway_payment_id, 'pi_')) {
                 $intent = $stripe->paymentIntents->retrieve($this->payment->gateway_payment_id);
                 
                 Log::info('Stripe PaymentIntent retrieved', [
@@ -500,6 +566,11 @@ class ProcessPendingPayment implements ShouldQueue
             // Create or update customer record
             $customer = $this->createOrUpdateCustomer();
             
+            // Calculate dates based on billing interval
+            $startsAt = now();
+            $expiresAt = $this->payment->generatedLink->plan->calculateExpiryDate($startsAt);
+            $durationDays = $this->payment->generatedLink->plan->getSubscriptionDurationDays();
+            
             // Create new subscription after successful payment
             $subscription = \App\Models\Subscription::create([
                 'subscription_id' => \Illuminate\Support\Str::uuid(),
@@ -509,12 +580,15 @@ class ProcessPendingPayment implements ShouldQueue
                 'customer_email' => $this->payment->customer_email,
                 'customer_phone' => $this->payment->customer_phone,
                 'status' => 'active',
-                'starts_at' => now(),
-                'expires_at' => now()->addDays($this->payment->generatedLink->plan->duration_days),
+                'starts_at' => $startsAt,
+                'expires_at' => $expiresAt,
+                'next_billing_date' => $expiresAt->copy(),
+                'billing_cycle_count' => 1,
+                'last_billing_date' => $startsAt,
                 'plan_data' => [
                     'name' => $this->payment->generatedLink->plan->name,
                     'price' => $this->payment->amount,
-                    'duration_days' => $this->payment->generatedLink->plan->duration_days
+                    'duration_days' => $durationDays
                 ]
             ]);
             

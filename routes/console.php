@@ -103,4 +103,31 @@ app()->booted(function () {
         ->onFailure(function () {
             \Log::error('Weekly payment verification report failed');
         });
+
+    // Lost payment recovery - Quick recovery every minute
+    $schedule->command('payments:recover-lost --limit=25 --min-age=30 --max-age=2880')
+        ->everyMinute()
+        ->withoutOverlapping()
+        ->runInBackground()
+        ->description('Recover payments that succeeded in gateway but stuck in system')
+        ->onSuccess(function () {
+            \Log::info('Quick lost payment recovery completed successfully');
+        })
+        ->onFailure(function () {
+            \Log::error('Quick lost payment recovery failed');
+        });
+
+    // Lost payment recovery - Weekly comprehensive recovery  
+    $schedule->command('payments:recover-lost --limit=100 --min-age=1440 --max-age=10080')
+        ->weekly()
+        ->sundays()
+        ->at('08:00')
+        ->withoutOverlapping()
+        ->description('Weekly recovery scan for lost payments')
+        ->onSuccess(function () {
+            \Log::info('Weekly lost payment recovery completed successfully');
+        })
+        ->onFailure(function () {
+            \Log::error('Weekly lost payment recovery failed');
+        });
 });

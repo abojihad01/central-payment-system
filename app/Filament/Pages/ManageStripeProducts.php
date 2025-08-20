@@ -15,13 +15,20 @@ class ManageStripeProducts extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     
-    protected static ?string $navigationGroup = 'Payment Management';
+    protected static ?string $navigationGroup = 'إدارة المدفوعات';
     
-    protected static ?string $navigationLabel = 'Stripe Products';
+    protected static ?string $navigationLabel = 'منتجات سترايب';
 
     protected static string $view = 'filament.pages.manage-stripe-products';
     
     protected static ?int $navigationSort = 6;
+    
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\StripeSyncStatusWidget::class,
+        ];
+    }
 
     public $selectedPlan = null;
     public $selectedAccount = null;
@@ -38,22 +45,22 @@ class ManageStripeProducts extends Page
     {
         return [
             Action::make('createStripeProduct')
-                ->label('Create Stripe Product')
+                ->label('إنشاء منتج سترايب')
                 ->icon('heroicon-o-plus')
                 ->color('primary')
                 ->form([
                     Forms\Components\Select::make('plan_id')
-                        ->label('Select Plan')
+                        ->label('اختر الخطة')
                         ->options(Plan::all()->pluck('name', 'id'))
                         ->required(),
                     Forms\Components\Select::make('payment_account_id')
-                        ->label('Stripe Account')
+                        ->label('حساب سترايب')
                         ->options(PaymentAccount::whereHas('gateway', function($q) {
                             $q->where('name', 'stripe');
                         })->pluck('name', 'id'))
                         ->required(),
                     Forms\Components\Toggle::make('is_recurring')
-                        ->label('Recurring Subscription')
+                        ->label('اشتراك متكرر')
                         ->default(false),
                 ])
                 ->action(function (array $data): void {
@@ -172,8 +179,63 @@ class ManageStripeProducts extends Page
                     }
                 }),
             
+            Action::make('syncPlansAcrossAccounts')
+                ->label('Sync Plans Across All Accounts')
+                ->icon('heroicon-o-arrow-path')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalHeading('Sync Plans Across All Stripe Accounts')
+                ->modalDescription('This will ensure all plans are available in all Stripe accounts. Missing products and prices will be created automatically.')
+                ->form([
+                    Forms\Components\Toggle::make('dry_run')
+                        ->label('Preview Only (Dry Run)')
+                        ->helperText('Enable to see what would be synced without making actual changes')
+                        ->default(true),
+                ])
+                ->action(function (array $data): void {
+                    try {
+                        $isDryRun = $data['dry_run'] ?? true;
+                        
+                        // Run the sync command
+                        $command = $isDryRun ? 'stripe:sync-plans --dry-run' : 'stripe:sync-plans';
+                        $output = \Artisan::call($command);
+                        
+                        // Get the command output
+                        $commandOutput = \Artisan::output();
+                        
+                        $title = $isDryRun ? 'Sync Preview Complete' : 'Plans Synced Successfully';
+                        $body = $isDryRun 
+                            ? 'Preview completed. Check the results and run without dry-run to apply changes.'
+                            : 'All plans have been synced across all Stripe accounts.';
+                        
+                        Notification::make()
+                            ->title($title)
+                            ->body($body)
+                            ->success()
+                            ->send();
+                            
+                        // Log the output for admin reference
+                        \Log::info('Stripe Plans Sync Command Output', [
+                            'dry_run' => $isDryRun,
+                            'output' => $commandOutput
+                        ]);
+                        
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Sync Failed')
+                            ->body('Error: ' . $e->getMessage())
+                            ->danger()
+                            ->send();
+                        
+                        \Log::error('Stripe Plans Sync Failed', [
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                    }
+                }),
+            
             Action::make('syncAllProducts')
-                ->label('Create All in Stripe')
+                ->label('Create All in Stripe (Legacy)')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('warning')
                 ->requiresConfirmation()
@@ -228,8 +290,29 @@ class ManageStripeProducts extends Page
     
     public function getPlansProperty()
     {
-        return Plan::with(['generatedLinks'])->get()->map(function ($plan) {
+        $stripeAccounts = PaymentAccount::whereHas('gateway', function($q) {
+            $q->where('name', 'stripe');
+        })->where('is_active', true)->get();
+        
+        return Plan::with(['generatedLinks'])->get()->map(function ($plan) use ($stripeAccounts) {
             $metadata = $plan->metadata ?? [];
+            $stripeProducts = $metadata['stripe_products'] ?? [];
+            
+            // Count how many accounts have this plan
+            $accountsWithPlan = 0;
+            $accountsSyncStatus = [];
+            
+            foreach ($stripeAccounts as $account) {
+                $hasProduct = isset($stripeProducts[$account->id]);
+                $accountsSyncStatus[$account->id] = [
+                    'name' => $account->name,
+                    'synced' => $hasProduct,
+                    'product_id' => $hasProduct ? $stripeProducts[$account->id]['product_id'] : null,
+                    'price_id' => $hasProduct ? $stripeProducts[$account->id]['price_id'] : null,
+                ];
+                if ($hasProduct) $accountsWithPlan++;
+            }
+            
             return [
                 'id' => $plan->id,
                 'name' => $plan->name,
@@ -241,6 +324,10 @@ class ManageStripeProducts extends Page
                 'recurring' => $metadata['recurring'] ?? false,
                 'is_synced' => isset($metadata['stripe_product_id']),
                 'links_count' => $plan->generatedLinks->count(),
+                'accounts_synced' => $accountsWithPlan,
+                'total_accounts' => $stripeAccounts->count(),
+                'sync_status' => $accountsSyncStatus,
+                'fully_synced' => $accountsWithPlan === $stripeAccounts->count(),
             ];
         });
     }

@@ -9,11 +9,11 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">
-                            Bot Protection Control Center
+                            مركز التحكم بالحماية من البوتات
                         </h3>
                         <p class="text-sm text-gray-500">
-                            Status: <span class="font-medium {{ $enabled ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $enabled ? 'ENABLED' : 'DISABLED' }}
+                            الحالة: <span class="font-medium {{ $enabled ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $enabled ? 'مفعل' : 'معطل' }}
                             </span>
                         </p>
                     </div>
@@ -21,9 +21,9 @@
                 
                 <button 
                     wire:click="toggleProtection"
-                    wire:confirm="{{ $enabled ? 'This will disable bot protection and make your site vulnerable to attacks. Are you sure?' : 'This will enable bot protection with current settings.' }}"
+                    wire:confirm="{{ $enabled ? 'سيؤدي هذا لإيقاف الحماية من البوتات وجعل موقعك عرضة للهجمات. هل أنت متأكد؟' : 'سيؤدي هذا لتفعيل الحماية من البوتات بالإعدادات الحالية.' }}"
                     class="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors {{ $enabled ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
-                    {{ $enabled ? 'Disable Protection' : 'Enable Protection' }}
+                    {{ $enabled ? 'إيقاف الحماية' : 'تفعيل الحماية' }}
                 </button>
             </div>
 
@@ -32,7 +32,7 @@
                 <!-- Rate Limiting -->
                 <div class="p-4 border border-gray-200 rounded-lg">
                     <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-medium text-gray-900">Rate Limiting</h4>
+                        <h4 class="font-medium text-gray-900">تحديد المعدل</h4>
                         <button 
                             wire:click="toggleFeature('rate_limit_enabled')"
                             class="w-6 h-6 rounded {{ $settings['rate_limit_enabled'] ? 'bg-green-500' : 'bg-gray-300' }} relative inline-flex items-center transition-colors">
@@ -40,11 +40,11 @@
                         </button>
                     </div>
                     <p class="text-sm text-gray-600">
-                        Max: {{ $settings['rate_limit_requests'] }} req/min
+                        الحد الأقصى: {{ $settings['rate_limit_requests'] }} طلب/دقيقة
                     </p>
                     <div class="mt-2">
                         <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded {{ $settings['rate_limit_enabled'] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                            {{ $settings['rate_limit_enabled'] ? 'Active' : 'Inactive' }}
+                            {{ $settings['rate_limit_enabled'] ? 'نشط' : 'غير نشط' }}
                         </span>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                 <!-- Bot Detection -->
                 <div class="p-4 border border-gray-200 rounded-lg">
                     <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-medium text-gray-900">Bot Detection</h4>
+                        <h4 class="font-medium text-gray-900">كشف البوتات</h4>
                         <button 
                             wire:click="toggleFeature('bot_detection_enabled')"
                             class="w-6 h-6 rounded {{ $settings['bot_detection_enabled'] ? 'bg-green-500' : 'bg-gray-300' }} relative inline-flex items-center transition-colors">

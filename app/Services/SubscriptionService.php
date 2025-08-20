@@ -116,8 +116,9 @@ class SubscriptionService
         // Calculate expiration date
         $expiresAt = null;
         if (!$plan->isRecurring()) {
-            // One-time payment expires after duration
-            $expiresAt = $plan->duration_days ? $now->copy()->addDays($plan->duration_days) : null;
+            // One-time payment expires after duration (fallback to 30 days if null)
+            $durationDays = $plan->duration_days ?? 30;
+            $expiresAt = $now->copy()->addDays($durationDays);
         } elseif ($plan->max_billing_cycles) {
             // Recurring with max cycles - calculate final expiration
             $cycleStart = $nextBillingDate ?? $now;

@@ -69,8 +69,8 @@ class AnalyticsOverview extends BaseWidget
             ->sum('plans.price');
 
         return [
-            Stat::make('Daily Revenue', '$' . number_format($todayRevenue, 2))
-                ->description($revenueChange >= 0 ? '+' . round($revenueChange, 1) . '% from yesterday' : round($revenueChange, 1) . '% from yesterday')
+            Stat::make('الإيرادات اليومية', '$' . number_format($todayRevenue, 2))
+                ->description($revenueChange >= 0 ? '+' . round($revenueChange, 1) . '% من الأمس' : round($revenueChange, 1) . '% من الأمس')
                 ->descriptionIcon($revenueChange >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
                 ->color($revenueChange >= 0 ? 'success' : 'danger')
                 ->chart([
@@ -78,38 +78,38 @@ class AnalyticsOverview extends BaseWidget
                     $todayRevenue,
                 ]),
 
-            Stat::make('Monthly Revenue', '$' . number_format($monthlyRevenue, 2))
-                ->description($monthlyRevenueChange >= 0 ? '+' . round($monthlyRevenueChange, 1) . '% from last month' : round($monthlyRevenueChange, 1) . '% from last month')
+            Stat::make('الإيرادات الشهرية', '$' . number_format($monthlyRevenue, 2))
+                ->description($monthlyRevenueChange >= 0 ? '+' . round($monthlyRevenueChange, 1) . '% من الشهر الماضي' : round($monthlyRevenueChange, 1) . '% من الشهر الماضي')
                 ->descriptionIcon($monthlyRevenueChange >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
                 ->color($monthlyRevenueChange >= 0 ? 'success' : 'danger'),
 
-            Stat::make('Monthly Recurring Revenue', '$' . number_format($mrr, 2))
-                ->description('Active subscription revenue')
+            Stat::make('الإيرادات الشهرية المتكررة', '$' . number_format($mrr, 2))
+                ->description('إيرادات الاشتراكات النشطة')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('primary'),
 
-            Stat::make('Active Subscriptions', number_format($activeSubscriptions))
-                ->description($trialSubscriptions . ' on trial')
+            Stat::make('الاشتراكات النشطة', number_format($activeSubscriptions))
+                ->description($trialSubscriptions . ' قيد التجربة')
                 ->descriptionIcon('heroicon-m-credit-card')
                 ->color('success'),
 
-            Stat::make('Total Customers', number_format($totalCustomers))
-                ->description($newCustomersToday . ' new today, ' . $newCustomersThisMonth . ' this month')
+            Stat::make('إجمالي العملاء', number_format($totalCustomers))
+                ->description($newCustomersToday . ' جديد اليوم، ' . $newCustomersThisMonth . ' هذا الشهر')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('primary'),
 
-            Stat::make('Security Alerts', number_format($fraudAlertsToday))
-                ->description('Fraud alerts today')
+            Stat::make('تنبيهات الأمان', number_format($fraudAlertsToday))
+                ->description('تنبيهات الاحتيال اليوم')
                 ->descriptionIcon('heroicon-m-shield-exclamation')
                 ->color($fraudAlertsToday > 10 ? 'danger' : ($fraudAlertsToday > 5 ? 'warning' : 'success')),
 
-            Stat::make('Churn Rate', $this->calculateChurnRate() . '%')
-                ->description('Monthly churn rate')
+            Stat::make('معدل الإلغاء', $this->calculateChurnRate() . '%')
+                ->description('معدل الإلغاء الشهري')
                 ->descriptionIcon('heroicon-m-arrow-right-start-on-rectangle')
                 ->color($this->calculateChurnRate() > 5 ? 'danger' : 'success'),
 
-            Stat::make('Conversion Rate', $this->calculateConversionRate() . '%')
-                ->description('Trial to paid conversion')
+            Stat::make('معدل التحويل', $this->calculateConversionRate() . '%')
+                ->description('التحويل من التجربة للدفع')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('primary'),
         ];

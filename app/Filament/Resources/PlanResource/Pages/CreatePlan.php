@@ -119,9 +119,10 @@ class CreatePlan extends CreateRecord
             $productIds = collect($successful)->pluck('product_id')->implode(', ');
             
             Notification::make()
-                ->title('Plan Created Successfully!')
-                ->body("Plan created and synced to Stripe accounts: {$accountNames}. Product IDs: {$productIds}")
+                ->title('🎉 Plan Created Successfully!')
+                ->body("Plan '{$this->record->name}' has been created and automatically synced to Stripe accounts: {$accountNames}. Product IDs: {$productIds}. You can now use this plan for payments!")
                 ->success()
+                ->duration(8000)
                 ->send();
                 
         } elseif (!empty($successful) && !empty($failed)) {
@@ -130,17 +131,19 @@ class CreatePlan extends CreateRecord
             $failureCount = count($failed);
             
             Notification::make()
-                ->title('Plan Created with Partial Stripe Sync')
-                ->body("Plan created successfully. {$successCount} Stripe products created, {$failureCount} failed. Check logs for details.")
+                ->title('⚠️ Plan Created with Partial Stripe Sync')
+                ->body("Plan '{$this->record->name}' created successfully. {$successCount} Stripe products created, {$failureCount} failed. You can use the 'Sync Plans Across All Accounts' feature to fix the missing ones.")
                 ->warning()
+                ->duration(10000)
                 ->send();
                 
         } else {
             // All failed
             Notification::make()
-                ->title('Plan Created but All Stripe Syncs Failed')
-                ->body("Plan created successfully, but failed to create in any Stripe account. " . implode('; ', $failed))
+                ->title('⚠️ Plan Created but Stripe Sync Failed')
+                ->body("Plan '{$this->record->name}' was created successfully, but failed to sync to any Stripe account. You can manually sync it later using the 'Sync Plans Across All Accounts' feature. Errors: " . implode('; ', $failed))
                 ->warning()
+                ->duration(12000)
                 ->send();
         }
     }
