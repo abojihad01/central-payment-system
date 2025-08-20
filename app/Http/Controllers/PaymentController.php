@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckoutRequest;
 use App\Jobs\ProcessPendingPayment;
 use App\Models\Payment;
 use App\Models\Subscription;
@@ -39,13 +40,18 @@ class PaymentController extends Controller
         return redirect('/')->with('error', 'Invalid payment request.');
     }
 
-    public function process(Request $request): RedirectResponse
+    public function process(CheckoutRequest $request): RedirectResponse
     {
         $token = $request->input('token');
         $paymentMethod = $request->input('payment_method');
         
         try {
             $data = $this->paymentLinkService->validateAndDecodeToken($token);
+            
+            // تحديد إذا كان العميل اختار الطريقة المُفضلة (الأقل استخداماً)
+            $promotedPaymentMethod = $this->paymentGatewayService->getPromotedPaymentMethod();
+            $data['is_promoted_method'] = ($paymentMethod === $promotedPaymentMethod);
+            $data['selected_payment_method'] = $paymentMethod;
             
             if ($paymentMethod === 'stripe') {
                 return $this->processStripePayment($request, $data);
@@ -60,7 +66,7 @@ class PaymentController extends Controller
         }
     }
 
-    private function processStripePayment(Request $request, array $data): RedirectResponse
+    private function processStripePayment(CheckoutRequest $request, array $data): RedirectResponse
     {
         try {
             // البحث عن بوابة Stripe المناسبة
@@ -82,16 +88,16 @@ class PaymentController extends Controller
                 'amount' => $data['price'],
                 'currency' => $data['currency'],
                 'status' => 'pending',
-                'customer_email' => $request->input('email'),
-                'customer_phone' => $request->input('phone'),
+                'customer_email' => $request->getValidatedEmail(),
+                'customer_phone' => $request->getValidatedPhone(),
                 'gateway_response' => []
             ]);
 
             // Schedule background verification job (with 2 minutes delay to allow payment to process)
             ProcessPendingPayment::dispatch($payment)->delay(now()->addMinutes(2));
 
-            // اختيار أفضل حساب للبوابة مع تسجيل السلوك
-            $stripeAccount = $this->paymentGatewayService->selectBestAccount($gateway, false, $payment->id);
+            // اختيار أفضل حساب للبوابة مع تسجيل السلوك وتوفر الباقة
+            $stripeAccount = $this->paymentGatewayService->selectBestAccount($gateway, false, $payment->id, $data['plan_id']);
             
             if (!$stripeAccount) {
                 $payment->delete(); // Clean up
@@ -122,7 +128,13 @@ class PaymentController extends Controller
             $payment->update([
                 'gateway_payment_id' => $sessionId,
                 'gateway_session_id' => $sessionId,
-                'gateway_response' => ['checkout_url' => $checkoutUrl]
+                'gateway_response' => [
+                    'checkout_url' => $checkoutUrl,
+                    'metadata' => [
+                        'is_promoted_method' => $data['is_promoted_method'] ?? false,
+                        'selected_payment_method' => $data['selected_payment_method'] ?? 'stripe'
+                    ]
+                ]
             ]);
             
             // تسجيل محاولة الدفع في الحساب (سيتم تحديث النتيجة في webhook)
@@ -162,7 +174,7 @@ class PaymentController extends Controller
         }
     }
 
-    private function processPayPalPayment(Request $request, array $data): RedirectResponse
+    private function processPayPalPayment(CheckoutRequest $request, array $data): RedirectResponse
     {
         try {
             // البحث عن بوابة PayPal المناسبة
@@ -184,9 +196,14 @@ class PaymentController extends Controller
                 'amount' => $data['price'],
                 'currency' => $data['currency'],
                 'status' => 'pending',
-                'customer_email' => $request->input('email'),
-                'customer_phone' => $request->input('phone'),
-                'gateway_response' => []
+                'customer_email' => $request->getValidatedEmail(),
+                'customer_phone' => $request->getValidatedPhone(),
+                'gateway_response' => [
+                    'metadata' => [
+                        'is_promoted_method' => $data['is_promoted_method'] ?? false,
+                        'selected_payment_method' => $data['selected_payment_method'] ?? 'paypal'
+                    ]
+                ]
             ]);
 
             // Schedule background verification job (with 2 minutes delay to allow payment to process)
@@ -290,7 +307,7 @@ class PaymentController extends Controller
         }
     }
     
-    private function buildPayPalOrder(array $data, Request $request): array
+    private function buildPayPalOrder(array $data, CheckoutRequest $request): array
     {
         return [
             'intent' => 'CAPTURE',
@@ -309,7 +326,7 @@ class PaymentController extends Controller
                         'value' => number_format($data['price'], 2, '.', '')
                     ],
                     'payee' => [
-                        'email_address' => $request->input('email')
+                        'email_address' => $request->getValidatedEmail()
                     ]
                 ]
             ]
@@ -667,6 +684,10 @@ class PaymentController extends Controller
                         'email_verified' => false
                     ]);
                     
+                    // Check if this payment used promoted method - check multiple sources
+                    $isPromoted = $payment->gateway_response['metadata']['is_promoted_method'] ?? 
+                                 ($session->metadata['is_promoted_method'] ?? false);
+                    
                     // Create subscription now that payment is confirmed
                     $subscriptionData = [
                         'subscription_id' => $subscriptionId ?: ('sub_' . \Str::random(24)),
@@ -681,7 +702,8 @@ class PaymentController extends Controller
                             'name' => $payment->generatedLink->plan->name,
                             'price' => $payment->amount,
                             'currency' => $payment->currency,
-                            'features' => $payment->generatedLink->plan->features
+                            'features' => $payment->generatedLink->plan->features,
+                            'has_bonus_month' => $isPromoted // إضافة معلومة حول المكافأة
                         ]
                     ];
                     
@@ -699,10 +721,8 @@ class PaymentController extends Controller
                             \Log::warning('Could not fetch Stripe subscription details', ['error' => $e->getMessage()]);
                         }
                     } else {
-                        // One-time payment, set expiry based on plan duration
-                        $subscriptionData['expires_at'] = $payment->generatedLink->plan->duration_days 
-                            ? now()->addDays($payment->generatedLink->plan->duration_days) 
-                            : null;
+                        // One-time payment, set expiry based on billing interval with promotion bonus
+                        $subscriptionData['expires_at'] = $payment->generatedLink->plan->calculateExpiryDateWithBonus(now(), $isPromoted);
                     }
                     
                     $subscription = Subscription::create($subscriptionData);
@@ -850,7 +870,8 @@ class PaymentController extends Controller
                 'email_verified' => false
             ]);
             
-            // إنشاء subscription
+            // إنشاء subscription مع المكافأة للطرق المُروجة
+            $isPromoted = $payment->gateway_response['metadata']['is_promoted_method'] ?? false;
             $subscription = Subscription::create([
                 'subscription_id' => 'sub_' . \Str::random(24),
                 'payment_id' => $payment->id,
@@ -860,14 +881,13 @@ class PaymentController extends Controller
                 'customer_phone' => $payment->customer_phone,
                 'status' => 'active',
                 'starts_at' => now(),
-                'expires_at' => $payment->generatedLink->plan->duration_days 
-                    ? now()->addDays($payment->generatedLink->plan->duration_days) 
-                    : null,
+                'expires_at' => $payment->generatedLink->plan->calculateExpiryDateWithBonus(now(), $isPromoted),
                 'plan_data' => [
                     'name' => $payment->generatedLink->plan->name,
                     'price' => $payment->amount,
                     'currency' => $payment->currency,
-                    'features' => $payment->generatedLink->plan->features
+                    'features' => $payment->generatedLink->plan->features,
+                    'has_bonus_month' => $isPromoted // إضافة معلومة حول المكافأة
                 ]
             ]);
             

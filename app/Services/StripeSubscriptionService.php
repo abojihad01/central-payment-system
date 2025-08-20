@@ -100,20 +100,16 @@ class StripeSubscriptionService
         
         $plan = Plan::find($data['plan_id']);
         
-        // Get or create Stripe product/price
-        $stripeProductId = $plan->metadata['stripe_product_id'] ?? null;
-        $stripePriceId = $plan->metadata['stripe_price_id'] ?? null;
+        // Get Stripe product/price for this specific account
+        $stripePriceId = $this->getStripePriceIdForAccount($plan, $account);
         
-        if (!$stripeProductId || !$stripePriceId) {
+        if (!$stripePriceId) {
+            // Create product and price for this account
             $result = $this->createProductAndPrice($plan, $account);
-            $stripeProductId = $result['product']->id;
             $stripePriceId = $result['price']->id;
             
-            // Save to plan metadata
-            $metadata = $plan->metadata ?? [];
-            $metadata['stripe_product_id'] = $stripeProductId;
-            $metadata['stripe_price_id'] = $stripePriceId;
-            $plan->update(['metadata' => $metadata]);
+            // Save to plan metadata under the account-specific section
+            $this->savePriceIdToAccount($plan, $account, $result['product']->id, $stripePriceId);
         }
         
         $sessionData = [
@@ -128,6 +124,8 @@ class StripeSubscriptionService
                 'customer_email' => $request->input('email'),
                 'customer_phone' => $request->input('phone', ''),
                 'payment_account_id' => $account->id,
+                'is_promoted_method' => $data['is_promoted_method'] ?? false,
+                'selected_payment_method' => $data['selected_payment_method'] ?? 'stripe',
             ]
         ];
         
@@ -138,14 +136,33 @@ class StripeSubscriptionService
                 'plan_name' => $plan->name,
                 'subscription_type' => $plan->subscription_type,
                 'billing_interval' => $plan->billing_interval,
-                'stripe_price_id' => $stripePriceId
+                'stripe_price_id' => $stripePriceId,
+                'is_promoted_method' => $data['is_promoted_method'] ?? false
             ]);
             
             $sessionData['mode'] = 'subscription';
-            $sessionData['line_items'] = [[
+            $lineItemData = [
                 'price' => $stripePriceId,
                 'quantity' => 1,
-            ]];
+            ];
+
+            // إضافة metadata للعرض المُروج (سيتم تطبيق الشهر المجاني في webhook)
+            if ($data['is_promoted_method'] ?? false) {
+                $sessionData['subscription_data'] = [
+                    'metadata' => [
+                        'free_month_applied' => 'true',
+                        'promotion_reason' => 'less_used_payment_method'
+                    ]
+                ];
+                
+                \Log::info('Applied free month promotion metadata for less used payment method', [
+                    'plan_id' => $plan->id,
+                    'payment_method' => $data['selected_payment_method'],
+                    'note' => 'Free month will be applied via expires_at calculation in webhook'
+                ]);
+            }
+
+            $sessionData['line_items'] = [$lineItemData];
         } else {
             \Log::info('Creating Stripe one-time payment checkout', [
                 'plan_id' => $plan->id,
@@ -273,16 +290,75 @@ class StripeSubscriptionService
             ]
         ];
         
+        // Check if this payment used the promoted method (less used gateway)
+        $gatewayResponse = $payment->gateway_response ?? [];
+        $isPromotedMethod = false;
+        
+        // Check Stripe metadata for promoted method flag
+        if ($payment->payment_gateway === 'stripe' && isset($gatewayResponse['metadata']['is_promoted_method'])) {
+            $isPromotedMethod = ($gatewayResponse['metadata']['is_promoted_method'] === 'true');
+        }
+        
+        // For PayPal, check through payment creation data (you'd store this during creation)
+        if ($payment->payment_gateway === 'paypal') {
+            // You could store this information during PayPal payment creation
+            $paymentMetadata = $gatewayResponse['metadata'] ?? [];
+            $isPromotedMethod = ($paymentMetadata['is_promoted_method'] ?? false);
+        }
+
         // Check if it's a recurring subscription
         $plan = $payment->generatedLink->plan;
         if ($plan && $plan->subscription_type === 'recurring' && $plan->billing_interval) {
             $subscriptionData['expires_at'] = null; // Recurring subscription
-            $subscriptionData['next_billing_date'] = $this->calculateNextBillingDate($plan->billing_interval);
+            $nextBillingDate = $this->calculateNextBillingDate($plan->billing_interval);
+            
+            // Add free month if customer used promoted method
+            if ($isPromotedMethod) {
+                $nextBillingDate = $nextBillingDate->addMonth(); // Add extra month
+                $subscriptionData['promotion_applied'] = 'free_month_less_used_gateway';
+                $subscriptionData['promotion_details'] = [
+                    'type' => 'free_month',
+                    'reason' => 'Used less popular payment method',
+                    'payment_method' => $payment->payment_gateway,
+                    'applied_at' => now(),
+                    'extra_days' => 30
+                ];
+                
+                \Log::info('Free month promotion applied to subscription', [
+                    'payment_id' => $payment->id,
+                    'payment_method' => $payment->payment_gateway,
+                    'original_billing_date' => $this->calculateNextBillingDate($plan->billing_interval),
+                    'new_billing_date' => $nextBillingDate
+                ]);
+            }
+            
+            $subscriptionData['next_billing_date'] = $nextBillingDate;
         } else {
             // One-time payment, set expiry based on plan duration
-            $subscriptionData['expires_at'] = $plan && $plan->duration_days 
-                ? now()->addDays($plan->duration_days) 
-                : null;
+            $baseDuration = $plan && $plan->duration_days ? $plan->duration_days : 30;
+            $expiryDate = now()->addDays($baseDuration);
+            
+            // Add free month for one-time payments too
+            if ($isPromotedMethod) {
+                $expiryDate = $expiryDate->addDays(30); // Add 30 extra days
+                $subscriptionData['promotion_applied'] = 'free_month_less_used_gateway';
+                $subscriptionData['promotion_details'] = [
+                    'type' => 'free_month',
+                    'reason' => 'Used less popular payment method',
+                    'payment_method' => $payment->payment_gateway,
+                    'applied_at' => now(),
+                    'extra_days' => 30
+                ];
+                
+                \Log::info('Free month promotion applied to one-time subscription', [
+                    'payment_id' => $payment->id,
+                    'payment_method' => $payment->payment_gateway,
+                    'base_duration' => $baseDuration,
+                    'total_duration' => $baseDuration + 30
+                ]);
+            }
+            
+            $subscriptionData['expires_at'] = $expiryDate;
         }
         
         $subscription = \App\Models\Subscription::create($subscriptionData);
@@ -361,5 +437,62 @@ class StripeSubscriptionService
             'yearly' => now()->addYear(),
             default => now()->addMonth()
         };
+    }
+
+    /**
+     * Get Stripe price ID for a plan in a specific account
+     */
+    private function getStripePriceIdForAccount(Plan $plan, PaymentAccount $account): ?string
+    {
+        $metadata = $plan->metadata ?? [];
+        
+        // Check new format first (stripe_products array)
+        $stripeProducts = $metadata['stripe_products'] ?? [];
+        if (isset($stripeProducts[$account->id]['price_id'])) {
+            return $stripeProducts[$account->id]['price_id'];
+        }
+
+        // Fallback to old format if this is the primary account
+        $primaryAccountId = $metadata['stripe_account_id'] ?? null;
+        if ($primaryAccountId == $account->id && isset($metadata['stripe_price_id'])) {
+            return $metadata['stripe_price_id'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Save price ID to account-specific metadata
+     */
+    private function savePriceIdToAccount(Plan $plan, PaymentAccount $account, string $productId, string $priceId): void
+    {
+        $metadata = $plan->metadata ?? [];
+        
+        // Initialize stripe_products array if not exists
+        if (!isset($metadata['stripe_products'])) {
+            $metadata['stripe_products'] = [];
+        }
+        
+        // Save product and price info for this account
+        $metadata['stripe_products'][$account->id] = [
+            'product_id' => $productId,
+            'price_id' => $priceId
+        ];
+        
+        // Also update the account_id for backwards compatibility if not set
+        if (!isset($metadata['stripe_account_id'])) {
+            $metadata['stripe_account_id'] = $account->id;
+            $metadata['stripe_product_id'] = $productId;
+            $metadata['stripe_price_id'] = $priceId;
+        }
+        
+        $plan->update(['metadata' => $metadata]);
+        
+        \Log::info('Saved Stripe product/price for account', [
+            'plan_id' => $plan->id,
+            'account_id' => $account->id,
+            'product_id' => $productId,
+            'price_id' => $priceId
+        ]);
     }
 }

@@ -1,3 +1,4 @@
+<!-- Debug: Promoted Payment Method = {{ $promotedPaymentMethod ?? 'null' }} -->
 <!DOCTYPE html>
 <html lang="{{ $language ?? app()->getLocale() }}" dir="{{ $isRTL ?? (in_array(app()->getLocale(), ['ar', 'he', 'fa', 'ur'])) ? 'rtl' : 'ltr' }}">
 <head>
@@ -122,15 +123,152 @@
         /* Selection states */
         input[type="radio"]:checked + .payment-card-content {
             border-color: rgb(59 130 246) !important;
-            background-color: rgb(239 246 255) !important;
+            background: linear-gradient(135deg, rgb(239 246 255) 0%, rgb(219 234 254) 100%) !important;
+            box-shadow: 0 4px 20px -4px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
+            transform: translateY(-2px) scale(1.02) !important;
         }
         
         input[type="radio"]:checked + .payment-card-content .selection-indicator {
             border-color: rgb(59 130 246) !important;
+            background-color: rgb(59 130 246) !important;
+            box-shadow: 0 0 0 2px rgb(239 246 255), 0 2px 8px rgba(59, 130, 246, 0.3) !important;
         }
         
         input[type="radio"]:checked + .payment-card-content .selection-dot {
             opacity: 1 !important;
+            background-color: white !important;
+            transform: scale(1.2) !important;
+        }
+        
+        /* Enhanced hover states for better interaction feedback */
+        .payment-card-content:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15) !important;
+            border-color: rgb(147 197 253) !important;
+        }
+        
+        /* Override hover when selected */
+        input[type="radio"]:checked + .payment-card-content:hover {
+            transform: translateY(-2px) scale(1.02) !important;
+            box-shadow: 0 4px 25px -4px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(59, 130, 246, 0.2) !important;
+            border-color: rgb(59 130 246) !important;
+        }
+        
+        /* Smooth transitions for all interactive elements */
+        .payment-card-content {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .selection-indicator {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .selection-dot {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        /* Promoted payment method styles */
+        .promoted-payment {
+            border-color: rgb(34 197 94) !important;
+            background: linear-gradient(135deg, rgb(236 253 245) 0%, rgb(220 252 231) 100%) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promoted-payment::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, rgb(34 197 94), rgb(16 185 129));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .promoted-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, rgb(34 197 94), rgb(16 185 129));
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+            animation: glow 2s infinite alternate;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: rotate(10deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.05); }
+        }
+
+        .free-month-banner {
+            background: linear-gradient(135deg, rgb(16 185 129), rgb(34 197 94));
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 2px 10px rgba(34, 197, 94, 0.3); }
+            to { box-shadow: 0 2px 20px rgba(34, 197, 94, 0.6); }
+        }
+        
+        /* Phone input styling fixes */
+        .phone-input-container {
+            min-height: 64px; /* Fixed height to prevent layout shifts */
+        }
+        
+        .phone-prefix {
+            min-width: 20px; /* Fixed width for + symbol */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .phone-input-field {
+            min-height: 56px; /* Match the container height */
+        }
+        
+        /* Ensure the phone input container maintains its shape */
+        .phone-input-container:focus-within {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Error state styling for phone container */
+        .phone-input-container.error {
+            border-color: rgb(239 68 68) !important;
+        }
+        
+        .phone-input-container.error:focus-within {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+            border-color: rgb(239 68 68) !important;
+        }
+        
+        /* Success state styling for phone container */
+        .phone-input-container.success {
+            border-color: rgb(34 197 94) !important;
+        }
+        
+        .phone-input-container.success:focus-within {
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+            border-color: rgb(34 197 94) !important;
         }
     </style>
 </head>
@@ -139,7 +277,6 @@
     <div id="loading-overlay" class="loading-overlay">
         <div class="text-center">
             <div class="loading-spinner"></div>
-            <p class="text-white mt-4 font-medium">{{ __('checkout.processing') }}</p>
         </div>
     </div>
 
@@ -237,20 +374,33 @@
                                     <input type="email" id="email" name="email" required
                                         class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base"
                                         placeholder="your@email.com">
+                                    <div id="email-error" class="mt-2 text-sm text-red-600 hidden"></div>
                                 </div>
                             </div>
                             
                             <div>
-                                <label for="phone" class="block text-base font-semibold text-gray-700 mb-3">{{ __('checkout.phone_optional') }}</label>
+                                <label for="phone" class="block text-base font-semibold text-gray-700 mb-3">{{ __('checkout.phone_required') }}</label>
                                 <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                        </svg>
+                                    <!-- Phone input with integrated prefix -->
+                                    <div class="phone-input-container flex items-center border border-gray-300 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200">
+                                        <!-- Phone icon -->
+                                        <div class="pl-4 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                            </svg>
+                                        </div>
+                                        <!-- Plus prefix (fixed) -->
+                                        <div class="phone-prefix pl-3 pointer-events-none">
+                                            <span class="text-gray-700 font-semibold text-base select-none">+</span>
+                                        </div>
+                                        <!-- Phone number input -->
+                                        <input type="tel" id="phone" required
+                                            class="phone-input-field flex-1 pl-2 pr-4 py-4 border-0 focus:outline-none focus:ring-0 text-base bg-transparent"
+                                            placeholder="1 (555) 123-4567"
+                                            pattern="[0-9\s\(\)\-]*"
+                                            inputmode="numeric">
                                     </div>
-                                    <input type="tel" id="phone" name="phone"
-                                        class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base"
-                                        placeholder="+1 (555) 123-4567">
+                                    <div id="phone-error" class="mt-2 text-sm text-red-600 hidden"></div>
                                 </div>
                             </div>
                         </div>
@@ -267,58 +417,96 @@
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Stripe Option -->
                             <label class="relative cursor-pointer">
-                                <input type="radio" name="payment_method" value="stripe" class="sr-only" checked>
-                                <div class="payment-card-content flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-2xl bg-white transition-all duration-200 hover:border-blue-300 hover:shadow-md">
+                                @if($promotedPaymentMethod === 'stripe')
+                                    <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 z-20">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg animate-pulse whitespace-nowrap">
+                                            ✨ {{ __('checkout.special_offer') }}
+                                        </span>
+                                    </div>
+                                @endif
+                                <input type="radio" name="payment_method" value="stripe" class="sr-only" {{ $promotedPaymentMethod === 'stripe' || empty($promotedPaymentMethod) ? 'checked' : '' }}>
+                                <div class="payment-card-content flex flex-col items-center justify-between p-6 border-2 border-gray-200 rounded-2xl bg-white transition-all duration-200 hover:border-blue-300 hover:shadow-md h-full min-h-[200px] {{ $promotedPaymentMethod === 'stripe' ? 'promoted-payment' : '' }}">
+                                    
                                     <!-- Radio Indicator -->
-                                    <div class="absolute top-4 right-4 w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center selection-indicator">
-                                        <div class="w-2.5 h-2.5 bg-blue-500 rounded-full opacity-0 selection-dot"></div>
+                                    <div class="absolute top-4 right-4 w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center selection-indicator">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full opacity-0 selection-dot"></div>
                                     </div>
                                     
-                                    <!-- Credit Card Icon -->
-                                    <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
-                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                                        </svg>
+                                    <div class="flex flex-col items-center w-full">
+                                        <!-- Credit Card Icon -->
+                                        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                            </svg>
+                                        </div>
+                                        
+                                        <!-- Card Title -->
+                                        <h4 class="font-semibold text-gray-900 text-center mb-2">{{ __('checkout.credit_card') }}</h4>
+                                        <p class="text-sm text-gray-500 text-center mb-4">{{ __('checkout.secure_payment') }}</p>
+                                        
+                                        <!-- Card Brand Icons -->
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <img src="https://iptvnordic.app/images/payment-icons/visa.svg" alt="Visa" class="h-6 w-auto">
+                                            <img src="https://iptvnordic.app/images/payment-icons/mastercard.svg" alt="Mastercard" class="h-6 w-auto">
+                                            <img src="https://iptvnordic.app/images/payment-icons/apple-pay.svg" alt="Apple Pay" class="h-6 w-auto">
+                                            <img src="https://iptvnordic.app/images/payment-icons/google-pay.svg" alt="Google Pay" class="h-6 w-auto">
+                                        </div>
                                     </div>
-                                    
-                                    <!-- Card Title -->
-                                    <h4 class="font-semibold text-gray-900 text-center mb-2">{{ __('checkout.credit_card') }}</h4>
-                                    <p class="text-sm text-gray-500 text-center mb-4">Secure payment</p>
-                                    
-                                    <!-- Card Brand Icons -->
-                                    <div class="flex items-center space-x-1">
-                                        <div class="w-8 h-5 bg-blue-600 rounded text-xs text-white font-bold flex items-center justify-center">VISA</div>
-                                        <div class="w-8 h-5 bg-red-600 rounded text-xs text-white font-bold flex items-center justify-center">MC</div>
-                                        <div class="w-8 h-5 bg-yellow-500 rounded text-xs text-white font-bold flex items-center justify-center">AE</div>
-                                    </div>
+
+                                    @if($promotedPaymentMethod === 'stripe')
+                                        <!-- Free Month Banner -->
+                                        <div class="free-month-banner w-full mt-auto">
+                                            <div class="text-xs">{{ __('checkout.stripe_special_offer') }}</div>
+                                        </div>
+                                    @endif
                                 </div>
                             </label>
                             
                             <!-- PayPal Option -->
                             <label class="relative cursor-pointer">
-                                <input type="radio" name="payment_method" value="paypal" class="sr-only">
-                                <div class="payment-card-content flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-2xl bg-white transition-all duration-200 hover:border-blue-300 hover:shadow-md">
+                                @if($promotedPaymentMethod === 'paypal')
+                                    <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 z-20">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg animate-pulse whitespace-nowrap">
+                                            ✨ {{ __('checkout.special_offer') }}
+                                        </span>
+                                    </div>
+                                @endif
+                                <input type="radio" name="payment_method" value="paypal" class="sr-only" {{ $promotedPaymentMethod === 'paypal' ? 'checked' : '' }}>
+                                <div class="payment-card-content flex flex-col items-center justify-between p-6 border-2 border-gray-200 rounded-2xl bg-white transition-all duration-200 hover:border-blue-300 hover:shadow-md h-full min-h-[200px] {{ $promotedPaymentMethod === 'paypal' ? 'promoted-payment' : '' }}">
+                                    
                                     <!-- Radio Indicator -->
-                                    <div class="absolute top-4 right-4 w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center selection-indicator">
-                                        <div class="w-2.5 h-2.5 bg-blue-500 rounded-full opacity-0 selection-dot"></div>
+                                    <div class="absolute top-4 right-4 w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center selection-indicator">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full opacity-0 selection-dot"></div>
                                     </div>
                                     
-                                    <!-- PayPal Icon -->
-                                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
-                                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm1.262-8.13a.858.858 0 0 1 .854-.693h2.19c3.517 0 6.063-1.43 6.898-5.524.027-.134.049-.27.067-.405.54-4.054-1.617-6.116-6.177-6.116H5.998L4.18 12.537l.002-.002c.114-.688.687-1.195 1.397-1.195l2.759-.033z"/>
-                                        </svg>
+                                    <div class="flex flex-col items-center w-full">
+                                        <!-- PayPal Logo -->
+                                        <div class="mb-4">
+                                        </div>
+                                        
+                                        <!-- PayPal Title -->
+                                        <h4 class="font-semibold text-gray-900 text-center mb-2">
+                                            <img src="{{ asset('images/paypal-logo.svg') }}" alt="PayPal" class="h-6 w-auto mx-auto">
+                                        </h4>
+                                        <p class="text-sm text-gray-500 text-center mb-4">{{ __('checkout.secure_payment') }}</p>
+                                        
+                                        <!-- Digital wallet badges -->
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <div class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-600 font-medium">Digital Wallet</div>
+                                            <div class="px-2 py-1 bg-blue-50 rounded text-xs text-blue-600 font-medium">Instant</div>
+                                        </div>
                                     </div>
-                                    
-                                    <!-- PayPal Title -->
-                                    <h4 class="font-semibold text-gray-900 text-center mb-2">{{ __('checkout.paypal') }}</h4>
-                                    <p class="text-sm text-gray-500 text-center mb-4">PayPal account</p>
-                                    
-                                    <!-- PayPal Logo -->
-                                    <div class="text-blue-600 font-bold text-lg">PayPal</div>
+
+                                    @if($promotedPaymentMethod === 'paypal')
+                                        <!-- Free Month Banner -->
+                                        <div class="free-month-banner w-full mt-auto">
+                                            <div class="text-xs">{{ __('checkout.paypal_special_offer') }}</div>
+                                        </div>
+                                    @endif
                                 </div>
                             </label>
                         </div>
+
                     </div>
 
                     <!-- Payment Info -->
@@ -356,11 +544,10 @@
                                 {{ __('checkout.pay_button', ['amount' => number_format($paymentData['price'], 2), 'currency' => strtoupper($paymentData['currency'])]) }}
                             </span>
                             <span id="spinner" class="hidden flex items-center justify-center">
-                                <svg class="animate-spin h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24">
+                                <svg class="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                {{ __('checkout.processing') }}
                             </span>
                         </button>
                     </div>
@@ -404,22 +591,146 @@
             const spinner = document.getElementById('spinner');
             const loadingOverlay = document.getElementById('loading-overlay');
             const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const emailError = document.getElementById('email-error');
+            const phoneError = document.getElementById('phone-error');
             
-            // Email validation
+            // Enhanced email validation
             function validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
+                const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+                return re.test(email) && email.length <= 254;
+            }
+            
+            // Phone validation (international format)
+            function validatePhone(phone) {
+                // Phone input only contains digits (+ is outside the input)
+                const cleanPhone = phone.replace(/[^\d]/g, '');
+                
+                // Must have 7-15 digits (+ is handled externally)
+                const phoneRegex = /^[1-9]\d{6,14}$/;
+                return phoneRegex.test(cleanPhone);
+            }
+            
+            // Format phone number as user types (digits only)
+            function formatPhone(phone) {
+                // Remove all non-digit characters
+                let cleaned = phone.replace(/[^\d]/g, '');
+                
+                // Don't allow leading zero
+                if (cleaned.startsWith('0')) {
+                    cleaned = cleaned.substring(1);
+                }
+                
+                return cleaned;
+            }
+            
+            // Get full phone number including the + prefix
+            function getFullPhoneNumber(phoneInput) {
+                const digits = phoneInput.replace(/[^\d]/g, '');
+                return digits ? '+' + digits : '';
+            }
+            
+            // Show error message
+            function showError(input, errorElement, message) {
+                if (input.id === 'phone') {
+                    // For phone input, style the container
+                    const container = input.closest('.phone-input-container');
+                    if (container) {
+                        container.classList.add('error');
+                        container.classList.remove('success');
+                    }
+                } else {
+                    // For email input, style the input directly
+                    input.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+                    input.classList.remove('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
+                }
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+            }
+            
+            // Hide error message
+            function hideError(input, errorElement) {
+                if (input.id === 'phone') {
+                    // For phone input, style the container
+                    const container = input.closest('.phone-input-container');
+                    if (container) {
+                        container.classList.remove('error');
+                        container.classList.add('success');
+                    }
+                } else {
+                    // For email input, style the input directly
+                    input.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+                    input.classList.add('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
+                }
+                errorElement.classList.add('hidden');
+            }
+            
+            // Reset input to neutral state
+            function resetInputState(input) {
+                if (input.id === 'phone') {
+                    const container = input.closest('.phone-input-container');
+                    if (container) {
+                        container.classList.remove('error', 'success');
+                    }
+                } else {
+                    input.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+                    input.classList.add('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
+                }
             }
             
             // Real-time email validation
             emailInput.addEventListener('input', function() {
                 const email = this.value.trim();
-                if (email && !validateEmail(email)) {
-                    this.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
-                    this.classList.remove('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
+                if (email) {
+                    if (!validateEmail(email)) {
+                        showError(this, emailError, 'Please enter a valid email address');
+                    } else {
+                        hideError(this, emailError);
+                    }
                 } else {
-                    this.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
-                    this.classList.add('border-gray-300', 'focus:ring-blue-500', 'focus:border-blue-500');
+                    hideError(this, emailError);
+                }
+            });
+            
+            // Real-time phone validation and formatting
+            phoneInput.addEventListener('input', function() {
+                let phone = this.value;
+                
+                // Reset to neutral state when user starts typing
+                if (phone.length <= 1) {
+                    resetInputState(this);
+                    const errorElement = document.getElementById('phone-error');
+                    errorElement.classList.add('hidden');
+                }
+                
+                // Format the phone number (digits only)
+                const formatted = formatPhone(phone);
+                if (formatted !== phone) {
+                    const cursorPos = this.selectionStart;
+                    this.value = formatted;
+                    // Restore cursor position
+                    this.setSelectionRange(cursorPos, cursorPos);
+                }
+                
+                phone = this.value.trim();
+                if (phone) {
+                    if (!validatePhone(phone)) {
+                        showError(this, phoneError, 'Please enter a valid phone number (e.g., 1234567890)');
+                    } else {
+                        hideError(this, phoneError);
+                    }
+                } else {
+                    resetInputState(this);
+                    phoneError.classList.add('hidden');
+                }
+            });
+            
+            // Prevent invalid characters in phone input (only digits allowed)
+            phoneInput.addEventListener('keypress', function(e) {
+                const char = String.fromCharCode(e.which);
+                // Allow only digits and control keys
+                if (!/[\d]/.test(char) && e.which !== 8 && e.which !== 0) {
+                    e.preventDefault();
                 }
             });
 
@@ -462,19 +773,59 @@
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
                 
+                // Validate payment method selection
+                const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+                if (!selectedPaymentMethod) {
+                    alert('{{ __('checkout.select_payment_method_error') }}');
+                    // Scroll to payment method section
+                    document.querySelector('input[name="payment_method"]').focus();
+                    return;
+                }
+                
                 // Validate email
                 const email = emailInput.value.trim();
                 if (!email) {
+                    showError(emailInput, emailError, 'Email address is required');
                     emailInput.focus();
-                    emailInput.classList.add('border-red-500');
                     return;
                 }
                 
                 if (!validateEmail(email)) {
+                    showError(emailInput, emailError, 'Please enter a valid email address');
                     emailInput.focus();
-                    emailInput.classList.add('border-red-500');
                     return;
                 }
+                
+                // Validate phone
+                const phone = phoneInput.value.trim();
+                if (!phone) {
+                    showError(phoneInput, phoneError, 'Phone number is required');
+                    phoneInput.focus();
+                    return;
+                }
+                
+                if (!validatePhone(phone)) {
+                    showError(phoneInput, phoneError, 'Please enter a valid phone number (e.g., 1234567890)');
+                    phoneInput.focus();
+                    return;
+                }
+                
+                // Add the + prefix to phone value before form submission
+                const fullPhoneNumber = getFullPhoneNumber(phone);
+                
+                // Create a hidden input with the full phone number
+                let hiddenPhoneInput = document.getElementById('phone-full');
+                if (!hiddenPhoneInput) {
+                    hiddenPhoneInput = document.createElement('input');
+                    hiddenPhoneInput.type = 'hidden';
+                    hiddenPhoneInput.id = 'phone-full';
+                    hiddenPhoneInput.name = 'phone';
+                    form.appendChild(hiddenPhoneInput);
+                }
+                hiddenPhoneInput.value = fullPhoneNumber;
+                
+                // Disable the visible phone input so it doesn't get submitted
+                phoneInput.disabled = true;
                 
                 // Show loading states
                 setLoading(true);

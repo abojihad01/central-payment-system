@@ -149,6 +149,68 @@ class Plan extends Model
     }
 
     /**
+     * Calculate subscription duration in days based on billing interval
+     */
+    public function getSubscriptionDurationDays(): int
+    {
+        $count = $this->billing_interval_count ?? 1;
+        
+        switch ($this->billing_interval) {
+            case 'daily':
+                return $count;
+            case 'weekly':
+                return $count * 7;
+            case 'monthly':
+                return $count * 30; // Approximate for calculation
+            case 'quarterly':
+                return $count * 90; // 3 months * 30 days
+            case 'yearly':
+                return $count * 365; // 1 year * 365 days
+            default:
+                return 30; // Default fallback
+        }
+    }
+
+    /**
+     * Calculate expiry date from start date based on billing interval
+     */
+    public function calculateExpiryDate(\Carbon\Carbon $startDate): \Carbon\Carbon
+    {
+        $expiry = clone $startDate;
+        $count = $this->billing_interval_count ?? 1;
+        
+        switch ($this->billing_interval) {
+            case 'daily':
+                return $expiry->addDays($count);
+            case 'weekly':
+                return $expiry->addWeeks($count);
+            case 'monthly':
+                return $expiry->addMonths($count);
+            case 'quarterly':
+                return $expiry->addMonths($count * 3);
+            case 'yearly':
+                return $expiry->addYears($count);
+            default:
+                return $expiry->addDays(30); // Default fallback
+        }
+    }
+
+    /**
+     * Calculate expiry date with promotional bonus (free month)
+     */
+    public function calculateExpiryDateWithBonus(\Carbon\Carbon $startDate, bool $hasPromotion = false): \Carbon\Carbon
+    {
+        $baseExpiry = $this->calculateExpiryDate($startDate);
+        
+        if ($hasPromotion) {
+            // Add one month bonus for promoted payment methods
+            return $baseExpiry->addMonth();
+        }
+        
+        return $baseExpiry;
+    }
+
+    /**
      * Get formatted price with currency.
      */
     public function getFormattedPrice(): string
