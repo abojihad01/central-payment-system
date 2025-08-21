@@ -188,6 +188,12 @@ class PaymentController extends Controller
                 return redirect($data['failure_url'] . '?error=paypal_not_available');
             }
             
+            // Prepare metadata without Gold Panel device data (will be selected after payment)
+            $metadata = [
+                'is_promoted_method' => $data['is_promoted_method'] ?? false,
+                'selected_payment_method' => $data['selected_payment_method'] ?? 'paypal'
+            ];
+
             // Create preliminary payment record for logging
             $payment = Payment::create([
                 'generated_link_id' => $data['link_id'],
@@ -199,10 +205,7 @@ class PaymentController extends Controller
                 'customer_email' => $request->getValidatedEmail(),
                 'customer_phone' => $request->getValidatedPhone(),
                 'gateway_response' => [
-                    'metadata' => [
-                        'is_promoted_method' => $data['is_promoted_method'] ?? false,
-                        'selected_payment_method' => $data['selected_payment_method'] ?? 'paypal'
-                    ]
+                    'metadata' => $metadata
                 ]
             ]);
 

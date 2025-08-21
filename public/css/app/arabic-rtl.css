@@ -1,0 +1,183 @@
+/* Arabic RTL Support for Filament Admin Panel */
+
+/* Set HTML direction to RTL */
+html[dir="rtl"] {
+    direction: rtl;
+}
+
+/* Filament specific RTL adjustments */
+html[dir="rtl"] .fi-main {
+    direction: rtl;
+}
+
+html[dir="rtl"] .fi-sidebar {
+    right: 0;
+    left: auto;
+}
+
+html[dir="rtl"] .fi-topbar {
+    direction: rtl;
+}
+
+/* Table adjustments */
+html[dir="rtl"] .fi-ta-table {
+    direction: rtl;
+}
+
+html[dir="rtl"] .fi-ta-cell {
+    text-align: right;
+}
+
+html[dir="rtl"] .fi-ta-cell:first-child {
+    text-align: right;
+}
+
+/* Form adjustments */
+html[dir="rtl"] .fi-fo-field-wrp {
+    direction: rtl;
+}
+
+html[dir="rtl"] .fi-fo-field-wrp label {
+    text-align: right;
+}
+
+/* Navigation adjustments */
+html[dir="rtl"] .fi-sidebar-nav {
+    direction: rtl;
+}
+
+html[dir="rtl"] .fi-sidebar-nav-item {
+    text-align: right;
+}
+
+/* Modal adjustments */
+html[dir="rtl"] .fi-modal {
+    direction: rtl;
+}
+
+/* Breadcrumb adjustments */
+html[dir="rtl"] .fi-breadcrumbs {
+    direction: rtl;
+}
+
+html[dir="rtl"] .fi-breadcrumbs ol {
+    flex-direction: row-reverse;
+}
+
+/* Badge and status adjustments */
+html[dir="rtl"] .fi-badge {
+    direction: rtl;
+}
+
+/* Button adjustments */
+html[dir="rtl"] .fi-btn {
+    direction: rtl;
+}
+
+/* Search and filter adjustments */
+html[dir="rtl"] .fi-ta-search-field {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Dropdown adjustments */
+html[dir="rtl"] .fi-dropdown {
+    direction: rtl;
+}
+
+/* Pagination adjustments */
+html[dir="rtl"] .fi-pagination {
+    direction: rtl;
+}
+
+/* Custom Arabic font support */
+body {
+    font-family: 'Cairo', 'Tajawal', 'Amiri', Arial, sans-serif;
+}
+
+/* Arabic number formatting */
+html[dir="rtl"] .arabic-numbers {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+/* Custom scrollbar for RTL */
+html[dir="rtl"] ::-webkit-scrollbar {
+    width: 8px;
+}
+
+html[dir="rtl"] ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+html[dir="rtl"] ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+html[dir="rtl"] ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Fix input placeholder alignment */
+html[dir="rtl"] input::placeholder,
+html[dir="rtl"] textarea::placeholder {
+    text-align: right;
+}
+
+/* Fix table column alignment */
+html[dir="rtl"] .fi-ta-header-cell-sort-button {
+    justify-content: flex-end;
+}
+
+/* Fix action buttons alignment */
+html[dir="rtl"] .fi-ta-actions {
+    justify-content: flex-start;
+}
+
+/* Fix notification positioning */
+html[dir="rtl"] .fi-notification {
+    direction: rtl;
+}
+
+/* Fix select dropdown */
+html[dir="rtl"] .fi-select {
+    direction: rtl;
+}
+
+html[dir="rtl"] .fi-select-input {
+    text-align: right;
+}
+
+/* Fix checkbox and radio alignment */
+html[dir="rtl"] .fi-checkbox,
+html[dir="rtl"] .fi-radio {
+    direction: rtl;
+}
+
+/* Fix icon positioning */
+html[dir="rtl"] .fi-icon {
+    margin-left: 0.5rem;
+    margin-right: 0;
+}
+
+/* Fix navigation icon positioning */
+html[dir="rtl"] .fi-sidebar-nav-item-icon {
+    margin-left: 0.75rem;
+    margin-right: 0;
+}
+
+/* Dashboard widget adjustments */
+html[dir="rtl"] .fi-wi {
+    direction: rtl;
+}
+
+/* Stats widget adjustments */
+html[dir="rtl"] .fi-wi-stats-overview {
+    direction: rtl;
+}
+
+/* Chart widget adjustments */
+html[dir="rtl"] .fi-wi-chart {
+    direction: rtl;
+}

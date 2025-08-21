@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DeviceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,3 +48,16 @@ Route::post('/test-recaptcha', function (Illuminate\Http\Request $request) {
 // Webhooks
 Route::post('/webhooks/stripe', [PaymentController::class, 'stripeWebhook'])->name('webhooks.stripe');
 Route::post('/webhooks/paypal', [PaymentController::class, 'paypalWebhook'])->name('webhooks.paypal');
+
+// Device management routes
+Route::prefix('devices')->group(function () {
+    Route::get('/select/{paymentId}', [DeviceController::class, 'selectAfterPayment'])->name('devices.select-after-payment');
+    Route::post('/save-selection/{paymentId}', [DeviceController::class, 'saveDeviceSelection'])->name('devices.save-selection');
+    Route::get('/', [DeviceController::class, 'index'])->name('devices.index');
+    Route::get('/{device}', [DeviceController::class, 'show'])->name('devices.show');
+    Route::get('/{device}/download', [DeviceController::class, 'downloadM3U'])->name('devices.download');
+    Route::post('/{device}/renew', [DeviceController::class, 'renew'])->name('devices.renew');
+    Route::post('/{device}/toggle', [DeviceController::class, 'toggleStatus'])->name('devices.toggle');
+    Route::post('/{device}/sync', [DeviceController::class, 'syncInfo'])->name('devices.sync');
+});
+Route::get('/customer/list', [DeviceController::class, 'customerDevices'])->name('devices.customer');

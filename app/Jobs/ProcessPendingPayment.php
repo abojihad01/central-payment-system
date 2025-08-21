@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Notifications\PaymentCompleted;
 use App\Notifications\SubscriptionActivated;
 use App\Services\StripeSubscriptionService;
+use App\Jobs\ProcessGoldPanelDevice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -620,7 +621,31 @@ class ProcessPendingPayment implements ShouldQueue
             
             // Send notification (enabled for testing with NotificationFake)
             Notification::send($subscription, new SubscriptionActivated($subscription));
+            
+            // Check if this is a GOLD PANEL subscription
+            $this->processGoldPanelDeviceIfNeeded($subscription);
         }
+    }
+
+    /**
+     * Process Gold Panel device if subscription requires it
+     */
+    protected function processGoldPanelDeviceIfNeeded($subscription)
+    {
+        // Check if payment has Gold Panel device data in gateway_response metadata
+        $deviceData = $this->payment->gateway_response['metadata']['gold_panel_device'] ?? null;
+        
+        if (!$deviceData) {
+            return;
+        }
+        
+        // Dispatch job to create device via Gold Panel API
+        ProcessGoldPanelDevice::dispatch($subscription, $deviceData)->delay(now()->addSeconds(5));
+        
+        Log::info('Dispatched Gold Panel device creation job', [
+            'subscription_id' => $subscription->id,
+            'device_type' => $deviceData['type'] ?? 'unknown'
+        ]);
     }
 
     /**

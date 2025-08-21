@@ -539,19 +539,43 @@
                 const redirectBtn = document.getElementById('success-redirect');
                 if (data.redirect_url) {
                     redirectBtn.href = data.redirect_url;
-                }
-                
-                // No auto-redirect, keep user on verification page
-                // Show success button without countdown
-                redirectBtn.innerHTML = `<i class="fas fa-check me-2"></i>المتابعة للصفحة التالية`;
-                
-                // Allow manual redirect only when user clicks
-                redirectBtn.onclick = (e) => {
-                    e.preventDefault();
-                    if (data.redirect_url) {
-                        window.location.href = data.redirect_url;
+                    
+                    // Auto-redirect after 3 seconds for device selection pages
+                    if (data.redirect_url.includes('/devices/select/')) {
+                        let countdown = 3;
+                        redirectBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>التوجيه لاختيار الجهاز خلال ${countdown} ثواني...`;
+                        
+                        const countdownInterval = setInterval(() => {
+                            countdown--;
+                            if (countdown > 0) {
+                                redirectBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>التوجيه لاختيار الجهاز خلال ${countdown} ثواني...`;
+                            } else {
+                                clearInterval(countdownInterval);
+                                window.location.href = data.redirect_url;
+                            }
+                        }, 1000);
+                        
+                        // Allow immediate redirect on click
+                        redirectBtn.onclick = (e) => {
+                            e.preventDefault();
+                            clearInterval(countdownInterval);
+                            window.location.href = data.redirect_url;
+                        };
+                    } else {
+                        // For other pages, show button without auto-redirect
+                        redirectBtn.innerHTML = `<i class="fas fa-check me-2"></i>المتابعة للصفحة التالية`;
+                        redirectBtn.onclick = (e) => {
+                            e.preventDefault();
+                            if (data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            }
+                        };
                     }
-                };
+                } else {
+                    // No redirect URL, just show success
+                    redirectBtn.innerHTML = `<i class="fas fa-check me-2"></i>العودة للصفحة الرئيسية`;
+                    redirectBtn.href = '/';
+                }
             }
             
             showError(message, data = null) {

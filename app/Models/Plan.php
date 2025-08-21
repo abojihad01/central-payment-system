@@ -172,6 +172,89 @@ class Plan extends Model
     }
 
     /**
+     * Get subscription duration in months
+     */
+    public function getDurationInMonths(): int
+    {
+        // If we have billing interval, calculate from that
+        if ($this->billing_interval && $this->billing_interval_count) {
+            $count = $this->billing_interval_count;
+            
+            switch ($this->billing_interval) {
+                case 'monthly':
+                    return $count;
+                case 'yearly':
+                    return $count * 12;
+                case 'quarterly':
+                    return $count * 3;
+                case 'weekly':
+                    return max(1, round($count / 4));
+                case 'daily':
+                    return max(1, round($count / 30));
+                default:
+                    return 1;
+            }
+        }
+        
+        // Fallback to duration_days if billing interval not set
+        if ($this->duration_days) {
+            return max(1, round($this->duration_days / 30));
+        }
+        
+        return 1; // Default to 1 month
+    }
+
+    /**
+     * Get subscription duration display text in Arabic
+     */
+    public function getDurationDisplayText(): string
+    {
+        // If we have billing interval, use that for more accurate display
+        if ($this->billing_interval && $this->billing_interval_count) {
+            $count = $this->billing_interval_count;
+            
+            switch ($this->billing_interval) {
+                case 'yearly':
+                    return $count > 1 ? "$count سنوات" : 'سنة كاملة';
+                case 'monthly':
+                    if ($count == 1) return 'شهر واحد';
+                    if ($count == 2) return 'شهران';
+                    return "$count أشهر";
+                case 'quarterly':
+                    $months = $count * 3;
+                    return $months == 3 ? '3 أشهر' : "$months شهر";
+                case 'weekly':
+                    $weeks = $count;
+                    return $weeks == 1 ? 'أسبوع واحد' : "$weeks أسابيع";
+                case 'daily':
+                    $days = $count;
+                    return $days == 1 ? 'يوم واحد' : "$days يوم";
+            }
+        }
+        
+        // Fallback to months calculation if no billing interval
+        $months = $this->getDurationInMonths();
+        
+        if ($months == 1) {
+            return 'شهر واحد';
+        } elseif ($months == 2) {
+            return 'شهران';
+        } elseif ($months == 3) {
+            return '3 أشهر';
+        } elseif ($months == 6) {
+            return '6 أشهر';
+        } elseif ($months == 12) {
+            return 'سنة كاملة';
+        } elseif ($months == 24) {
+            return 'سنتان';
+        } elseif ($months == 36) {
+            return '3 سنوات';
+        } else {
+            return "$months شهر";
+        }
+    }
+
+    /**
      * Calculate expiry date from start date based on billing interval
      */
     public function calculateExpiryDate(\Carbon\Carbon $startDate): \Carbon\Carbon

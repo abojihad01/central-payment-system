@@ -631,14 +631,22 @@ class PaymentVerificationController extends Controller
      */
     protected function getSuccessRedirectUrl(Payment $payment): string
     {
+        // Get plan from payment or generated link
+        $plan = $payment->plan ?? $payment->generatedLink?->plan;
+        
+        // Check if payment needs device selection (for IPTV subscriptions)
+        if ($plan && (str_contains(strtolower($plan->name), 'iptv') || str_contains(strtolower($plan->name), 'gold'))) {
+            return route('devices.select-after-payment', ['paymentId' => $payment->id]);
+        }
+        
         // Check if there's a custom success URL in the payment
         if ($payment->success_url) {
             return $payment->success_url;
         }
 
         // Check if the plan has a success URL
-        if ($payment->plan && $payment->plan->success_url) {
-            return $payment->plan->success_url;
+        if ($plan && $plan->success_url) {
+            return $plan->success_url;
         }
 
         // Default to home page

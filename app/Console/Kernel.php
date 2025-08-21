@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         Commands\RecoverLostPayments::class,
         Commands\MonitorPaymentHealth::class,
         Commands\FixBrokenSubscriptions::class,
+        Commands\SendDeviceExpiryReminders::class,
     ];
 
     /**
@@ -90,6 +91,15 @@ class Kernel extends ConsoleKernel
         // Stripe integration
         $schedule->command('stripe:sync-plans')->dailyAt('03:00')
                 ->description('Sync Stripe plans across accounts');
+
+        // Gold Panel device management
+        $schedule->command('devices:send-expiry-reminders --days=3')
+                ->dailyAt('10:00')
+                ->description('Send expiry reminders for devices expiring in 3 days');
+        
+        $schedule->command('devices:send-expiry-reminders --days=1')
+                ->dailyAt('10:00')
+                ->description('Send expiry reminders for devices expiring tomorrow');
 
         // Queue maintenance
         $schedule->command('queue:prune-failed --hours=168')

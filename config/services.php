@@ -62,4 +62,11 @@ return [
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
 
+    'gold_panel' => [
+        'base_url' => env('GOLD_PANEL_BASE_URL', 'https://gold.panel.provider/api'),
+        'api_key' => env('GOLD_PANEL_API_KEY'),
+        'default_pack_id' => env('GOLD_PANEL_DEFAULT_PACK_ID', 1),
+        'default_country' => env('GOLD_PANEL_DEFAULT_COUNTRY', 'US'),
+    ],
+
 ];
