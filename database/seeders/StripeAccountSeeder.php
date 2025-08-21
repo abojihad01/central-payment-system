@@ -33,8 +33,8 @@ class StripeAccountSeeder extends Seeder
                 'name' => 'Stripe Sandbox Account',
                 'description' => 'Test account for Stripe payments in sandbox mode',
                 'credentials' => [
-                    'publishable_key' => 'pk_test_51Rwjo0CD0UOpO5iifz49GWK45SqlxS9dSApGQ9opNPhUSTKfE0hiNtfMLL2hoIxEmlQq2nWWtBRbD6OBdl6juFU900RwMSgunf',
-                    'secret_key' => Crypt::encryptString('sk_test_51Rwjo0CD0UOpO5iiGuP3WNRQkgYJSMppU5HepRzmHqj3Fy6ag07MklRRPDxjlkjI3hDoa8NCWXuhHNPPnobLSo3q00Efez48Im')
+                    'publishable_key' => '',
+                    'secret_key' => Crypt::encryptString('')
                 ],
                 'is_active' => true,
                 'is_sandbox' => true,
